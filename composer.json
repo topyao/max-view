@@ -1,0 +1,17 @@
+{
+  "name": "max/template",
+  "authors": [
+    {
+      "name": "chengyao",
+      "email": "bigyao@139.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Max\\View\\": "src/View/"
+    }
+  },
+  "require": {
+    "php": ">=7.0.9"
+  }
+}
