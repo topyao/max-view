@@ -1,5 +1,8 @@
 {
   "name": "max/template",
+   "type": "library",
+  "license": "Apache-2.0",
+  "homepage": "https://www.chengyao.xyz",
   "authors": [
     {
       "name": "chengyao",
