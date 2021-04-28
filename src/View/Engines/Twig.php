@@ -25,6 +25,11 @@ class Twig extends Engine
         ]);
     }
 
+    /**
+     * 渲染模板
+     * @param array $arguments
+     * @return mixed
+     */
     public function render($arguments = [])
     {
         return $this->twig->render($this->template, $arguments);

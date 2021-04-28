@@ -20,6 +20,9 @@ class Render
      */
     public $engine = '';
 
+    /**
+     * 驱动类基础命名空间
+     */
     const NAMESPACE = '\\Max\\View\\Engines\\';
 
     /**
@@ -39,8 +42,9 @@ class Render
      * @param $template
      * 模板名
      * @param array $arguments
-     * 参数列表
+     * 参数
      * @return mixed
+     * @throws \Exception
      */
     public function render($template, $arguments = [])
     {

@@ -42,6 +42,10 @@ abstract class Engine
         $this->init();
     }
 
+    /**
+     * 初始化方法，需要实现
+     * @return mixed
+     */
     abstract public function init();
 
     /**
