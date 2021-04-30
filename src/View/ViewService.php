@@ -21,7 +21,7 @@ namespace Max\View {
 
     use Max\Contracts\Service;
 
-    class ViewService implements Service
+    class ViewService extends Service
     {
 
         public function register()
