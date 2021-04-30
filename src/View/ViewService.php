@@ -26,18 +26,15 @@ namespace Max\View {
 
         public function register()
         {
-            //将Render类和view标识绑定
-            app()->bind('view', Render::class);
+            $this->app->bind('view', Render::class);
         }
 
         public function boot()
         {
-            //加载视图配置
-            app('config')->load('view');
-            //设置视图目录
-            app('env')->set(
+            $this->app->config->load('view');
+            $this->app->env->set(
                 'view_path',
-                app('config')->get('view.path', env('root_path') . 'views/')
+                $this->app->config->get('view.path', $this->app->env->get('root_path') . 'views/')
             );
         }
     }
