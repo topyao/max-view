@@ -31,7 +31,6 @@ namespace Max\View {
 
         public function boot()
         {
-            $this->app->config->load('view');
             $this->app->env->set(
                 'view_path',
                 $this->app->config->get('view.path', $this->app->env->get('root_path') . 'views/')
