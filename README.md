@@ -11,6 +11,6 @@
 <img src="https://img.shields.io/badge/license-apache%202-blue">
 </p>
 
-Max框架视图功能扩展
+Max框架视图组件
 
 > 官网：https://www.chengyao.xyz

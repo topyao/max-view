@@ -17,7 +17,7 @@ namespace {
     }
 }
 
-namespace Max\View {
+namespace Max {
 
     use Max\Contracts\Service;
 
@@ -26,7 +26,7 @@ namespace Max\View {
 
         public function register()
         {
-            $this->app->bind('view', Render::class);
+            $this->app->bind('view', \Max\View\Render::class);
         }
 
         public function boot()
