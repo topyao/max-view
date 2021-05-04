@@ -3,6 +3,7 @@
   "type": "library",
   "license": "Apache-2.0",
   "homepage": "https://www.chengyao.xyz",
+  "description": "MaxPHP视图组件",
   "authors": [
     {
       "name": "chengyao",
