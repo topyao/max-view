@@ -17,5 +17,10 @@
   },
   "require": {
     "php": ">=7.0.9"
+  },
+  "extra": {
+    "max": {
+      "config": "src/view.php"
+    }
   }
 }
