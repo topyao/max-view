@@ -16,7 +16,7 @@ Max框架视图组件
 # 安装
 
 ```
-composer require max/cacheview:dev-master --prefer-dist
+composer require max/view:dev-master --prefer-dist
 ```
 
 # 使用
