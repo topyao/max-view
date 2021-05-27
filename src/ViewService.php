@@ -12,7 +12,7 @@ namespace {
          */
         function view(string $template, array $params = [])
         {
-            return invoke(['view', 'render'], [$template, $params]);
+            return app('view')->render($template, $params);
         }
     }
 }
