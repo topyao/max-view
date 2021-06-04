@@ -48,6 +48,6 @@ class Render
      */
     public function render($template, $arguments = [])
     {
-        return $this->app->invokeMethod([$this->engine, 'render'], [$arguments], true, [$template]);
+        return $this->app->make($this->engine, [$template], true)->render($arguments);
     }
 }

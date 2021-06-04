@@ -32,6 +32,11 @@ class Max extends Engine
      */
     public function render($arguments = [])
     {
-        return $this->max->render($this->template, $arguments);
+        try{
+            return $this->max->render($this->template, $arguments);
+        }catch(\Exception $e){
+            ob_clean();
+            throw $e;
+        }
     }
 }
