@@ -21,7 +21,7 @@ class Twig extends Engine
         $loader = new FilesystemLoader(env('view_path'));
         $this->twig = new Environment($loader, [
             'debug' => $this->config['debug'],
-            'cache' => $this->config['cache'] ? env('cache_path') . 'view' : false,
+            'cache' => $this->config['cache'] ? env('cache_path') . 'views' : false,
         ]);
     }
 

@@ -26,8 +26,8 @@ class Smarty extends Engine
         $this->smarty->right_delimiter = $this->config['right_delimiter'];
         $this->smarty
             ->setTemplateDir(env('view_path'))
-            ->setCompileDir(env('cache_path') . 'view' . DIRECTORY_SEPARATOR . 'compile')
-            ->setCacheDir(env('cache_path') . 'view');
+            ->setCompileDir(env('cache_path') . 'views' . DIRECTORY_SEPARATOR . 'compile')
+            ->setCacheDir(env('cache_path') . 'views');
     }
 
     /**
