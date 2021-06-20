@@ -1,7 +1,8 @@
 <?php
 
-
 namespace Max\Facade;
+
+use Max\Facade;
 
 /**
  * @method static render(string $template, $params = [])

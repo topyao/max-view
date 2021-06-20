@@ -19,7 +19,7 @@ namespace {
 
 namespace Max {
 
-    use Max\Contracts\Service;
+    use Max\Service;
 
     class ViewService extends Service
     {
