@@ -11,12 +11,12 @@
 <img src="https://img.shields.io/badge/license-apache%202-blue">
 </p>
 
-Max框架视图组件
+MaxPHP视图组件
 
 # 安装
 
 ```
-composer require max/view:dev-master --prefer-dist
+composer require max/view:dev-master
 ```
 
 # 使用
