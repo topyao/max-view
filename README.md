@@ -23,7 +23,7 @@ composer require max/view:dev-master
 
 ## 注册服务提供者
 
-在`/config/app.php` 的`provider`下的`http`中注册服务提供者类`\Max\ViewService::class`
+在`/config/app.php` 的`provider`下注册服务提供者类`\Max\ViewService::class`
 
 ## 配置文件
 
