@@ -20,7 +20,7 @@
   },
   "extra": {
     "max": {
-      "configure": "\\Max\\View\\Configure::install"
+      "configure": "\\Max\\ViewService::install"
     }
   }
 }

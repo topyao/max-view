@@ -36,5 +36,64 @@ namespace Max {
                 $this->app->config->get('view.path', $this->app->env->get('root_path') . 'views/')
             );
         }
+
+        public static function install()
+        {
+            $root = getcwd();
+            if (!is_dir($dir = $root . '/views')) {
+                mkdir($dir, 0777);
+            }
+            $file = '/config/view.php';
+            if (!file_exists($root . $file)) {
+                $config = <<<EOT
+<?php
+
+return [
+
+    //模板引擎类型 twig,smarty
+    'default' => 'max',
+
+    //null使用默认view路径/views
+    'path'    => null,
+
+    'max' => [
+        //模板调试
+        'debug'  => false,
+        //模板缓存
+        'cache'  => false,
+        //模板后缀
+        'suffix' => 'html',
+    ],
+
+    'twig' => [
+        //模板调试
+        'debug'  => false,
+        //模板缓存
+        'cache'  => false,
+        //模板后缀
+        'suffix' => 'html',
+    ],
+
+    'smarty' => [
+        //模板调试
+        'debug'           => false,
+        //模板缓存
+        'cache'           => false,
+        //模板后缀
+        'suffix'          => 'html',
+        //左右边界
+        'left_delimiter'  => '{{',
+        'right_delimiter' => '}}',
+    ]
+
+];
+
+EOT;
+                if (@file_put_contents($root . $file, $config)) {
+                    echo "\033[32m Generate config file successfully: {$file} \033[0m \n";
+                }
+            }
+        }
+
     }
 }
