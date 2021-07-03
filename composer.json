@@ -20,7 +20,9 @@
   },
   "extra": {
     "max": {
-      "configure": "\\Max\\ViewService::install"
+      "config": {
+        "view": "src/view.php"
+      }
     }
   }
 }
