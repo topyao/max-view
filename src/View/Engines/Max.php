@@ -4,6 +4,7 @@ namespace Max\View\Engines;
 
 use Max\View\Compiler;
 use Max\View\Engine;
+use function Max\env;
 
 class Max extends Engine
 {
@@ -32,9 +33,9 @@ class Max extends Engine
      */
     public function render($arguments = [])
     {
-        try{
+        try {
             return $this->max->render($this->template, $arguments);
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             ob_clean();
             throw $e;
         }

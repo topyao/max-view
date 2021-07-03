@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Max\View\Engines;
 
 use Max\View\Engine;
+use function Max\env;
 
 class Smarty extends Engine
 {
