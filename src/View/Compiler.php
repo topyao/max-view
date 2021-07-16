@@ -4,7 +4,7 @@
 namespace Max\View;
 
 
-use Max\Tools\File;
+use Max\Helper\File;
 
 class Compiler
 {
