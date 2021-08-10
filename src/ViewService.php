@@ -7,7 +7,7 @@ class ViewService extends Service
 
     public function register()
     {
-        $this->app->bind('view', \Max\View\Render::class);
+        $this->app->alias('view', \Max\View\Render::class);
     }
 
     public function boot()
@@ -29,5 +29,5 @@ class ViewService extends Service
  */
 function view(string $template, array $params = [])
 {
-    return \Max\app('view')->render($template, $params);
+    return app('view')->render($template, $params);
 }

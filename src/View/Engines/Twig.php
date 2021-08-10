@@ -6,7 +6,6 @@ namespace Max\View\Engines;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 use Max\View\Engine;
-use function Max\env;
 
 class Twig extends Engine
 {

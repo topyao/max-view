@@ -4,7 +4,6 @@ namespace Max\View\Engines;
 
 use Max\View\Compiler;
 use Max\View\Engine;
-use function Max\env;
 
 class Max extends Engine
 {
