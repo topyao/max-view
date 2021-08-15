@@ -48,6 +48,11 @@ class Render
      */
     public function render($template, $arguments = [])
     {
-        return $this->app->make($this->engine, [$template], true)->render($arguments);
+        ob_start();
+        $view = $this->app->make($this->engine, [$template], true)->render($arguments);
+        if (empty($view)) {
+            $view = ob_get_clean();
+        }
+        return $this->app->response->body($view);
     }
 }
