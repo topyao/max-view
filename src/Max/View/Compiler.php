@@ -1,10 +1,8 @@
 <?php
 
-
 namespace Max\View;
 
-
-use Max\Helper\File;
+use Max\Facade\File;
 
 class Compiler
 {
@@ -45,7 +43,7 @@ class Compiler
         $data         = $this->replace($this->getTemplateFile($template));
         $compiledFile = $this->compilePath . md5($template) . '.php';
         if (false === $this->cache || false === file_exists($compiledFile)) {
-            File::mkdir($this->compilePath);
+            !File::isDir($this->compilePath) && \Max\Facade\File::mkdir($this->compilePath);
             file_put_contents($compiledFile, $data);
         }
         extract($arguments);
@@ -129,14 +127,14 @@ class Compiler
                 '/\{\{(\w+)\(([\$\w]*)\)\}\}/'
             ],
             [
-                '<?php include(\'\\1\'); ?>',
-                '<?php echo \\1; ?>',
-                '<?php foreach(\\1 as \\2): ?>',
+                '<?php include(\'\1\'); ?>',
+                '<?php echo \1; ?>',
+                '<?php foreach(\1 as \2): ?>',
                 '<?php endforeach; ?>',
-                '<?php echo \\2(\\1); ?>',
-                '<?php if(\\1): ?>',
+                '<?php echo \2(\1); ?>',
+                '<?php if(\1): ?>',
                 '<?php endif; ?>',
-                '<?php echo \\1(\\2) ?>',
+                '<?php echo \1(\2) ?>',
             ],
             $template
         );
