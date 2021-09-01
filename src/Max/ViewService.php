@@ -32,7 +32,7 @@ namespace {
      */
     function view(string $template, array $params = [])
     {
-        return app('view')->render($template, $params);
+        return make('view')->render($template, $params);
     }
 
 }
