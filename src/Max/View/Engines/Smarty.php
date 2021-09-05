@@ -32,7 +32,7 @@ class Smarty extends Engine
      */
     protected function getTemplate($template)
     {
-        return $template;
+        return $this->handler->getTemplateDir(0) . $template . '.html';
     }
 
     public function render(string $template, array $arguments = [])
