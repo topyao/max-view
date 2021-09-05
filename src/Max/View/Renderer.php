@@ -47,20 +47,13 @@ class Renderer
      */
     public function get($key = 'default')
     {
-        $handler = $this->getHandler($key);
-        return new $handler($this->getOptions($key));
+        if ('default' === $key) {
+            $key = $this->config[$key];
+        }
+        $handler = $this->config[$key]['handler'];
+        return new $handler($this->config[$key]['options']);
     }
-
-    protected function getOptions($key)
-    {
-        return $this->config[$key]['options'];
-    }
-
-    protected function getHandler($key)
-    {
-        return $this->config[$key]['handler'];
-    }
-
+    
     /**
      * 模板渲染方法
      * @param $template
