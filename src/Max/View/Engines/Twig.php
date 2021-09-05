@@ -9,17 +9,10 @@ use Max\View\Engine;
 
 class Twig extends Engine
 {
-
-    /**
-     * Twig实例
-     * @var Environment
-     */
-    private $twig;
-
-    public function init()
+    public function __construct($options)
     {
         $loader = new FilesystemLoader(env('view_path'));
-        $this->twig = new Environment($loader, [
+        $this->handler = new Environment($loader, [
             'debug' => $this->config['debug'],
             'cache' => $this->config['cache'] ? env('cache_path') . 'views/' : false,
         ]);
@@ -32,6 +25,6 @@ class Twig extends Engine
      */
     public function render($arguments = [])
     {
-        return $this->twig->render($this->template, $arguments);
+        return $this->handler->render($this->template, $arguments);
     }
 }

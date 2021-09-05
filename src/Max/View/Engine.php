@@ -12,22 +12,7 @@ use Max\Config;
 abstract class Engine
 {
 
-    /**
-     * 默认模板后缀
-     */
-    const SUFFIX = 'html';
-
-    /**
-     * View配置
-     * @var array|mixed
-     */
-    protected $config = [];
-
-    /**
-     * 处理后的模板名
-     * @var string
-     */
-    protected $template;
+    protected $handler;
 
     /**
      * Driver constructor.
@@ -35,18 +20,7 @@ abstract class Engine
      * 需要渲染的模板
      * @param Config $config
      */
-    final public function __construct($template, Config $config)
-    {
-        $this->config   = $config->getDefault('view');
-        $this->template = $template . '.' . ($this->config['suffix'] ?? self::SUFFIX);
-        $this->init();
-    }
-
-    /**
-     * 初始化方法，需要实现
-     * @return mixed
-     */
-    abstract public function init();
+    abstract public function __construct(array $options);
 
     /**
      * 驱动实现方法
@@ -54,5 +28,5 @@ abstract class Engine
      * 给模板传递的参数
      * @return mixed
      */
-    abstract public function render($arguments = []);
+    abstract public function render(string $template, array $arguments = []);
 }

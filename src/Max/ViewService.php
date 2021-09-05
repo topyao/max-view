@@ -7,7 +7,7 @@ namespace Max {
 
         public function register()
         {
-            $this->app->alias('view', \Max\View\Render::class);
+            $this->app->alias('view', \Max\View\Renderer::class);
         }
 
         public function boot()

@@ -8,35 +8,33 @@ use Max\View\Engine;
 class Max extends Engine
 {
     /**
-     * Max Compiler示例
-     * @var
-     */
-    private $max;
-
-    /**
      * 初始化
      * @throws \Exception
      */
-    public function init()
+    public function __construct($options)
     {
-        $this->max = (new Compiler())
+        foreach ($options as $key => $option) {
+            $this->$key = $option;
+        }
+        $this->handler = (new Compiler())
             ->setViewPath(env('view_path'))
             ->setCompilePath(env('cache_path') . 'views/')
-            ->cache($this->config['cache'] ?? false);
+            ->cache($options['cache'] ?? false);
     }
 
-    /**
-     * 模板渲染
-     * @param array $arguments
-     * @return mixed
-     */
-    public function render($arguments = [])
+    public function getTemplate(string $template)
+    {
+        return $template . $this->suffix;
+    }
+
+    public function render(string $template, array $arguments = [])
     {
         try {
-            return $this->max->render($this->template, $arguments);
+            return $this->handler->render($this->getTemplate($template), $arguments);
         } catch (\Exception $e) {
             ob_clean();
             throw $e;
         }
     }
+
 }
