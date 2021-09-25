@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Max\View;
 
+use Max\Http\Response;
 use Psr\Http\Message\ResponseInterface;
 
 class Renderer
@@ -67,6 +68,6 @@ class Renderer
     {
         ob_start();
         $view = $this->get()->render($template, $arguments) ?: ob_get_clean();
-        return $this->response->withBody($view);
+        return Response::html($view);
     }
 }
