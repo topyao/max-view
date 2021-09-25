@@ -2,6 +2,7 @@
 
 return [
     'default' => 'max',
+    'path'    => '../views/',
     'max'     => [
         'handler' => \Max\View\Engines\Max::class,
         'options' => [
@@ -38,9 +39,4 @@ return [
             'right_delimiter' => '}}',
         ],
     ],
-
-    //null使用默认view路径/views
-    'path'    => null,
-
-
 ];

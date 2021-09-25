@@ -53,7 +53,7 @@ class Renderer
         $handler = $this->config[$key]['handler'];
         return new $handler($this->config[$key]['options']);
     }
-    
+
     /**
      * 模板渲染方法
      * @param $template
@@ -67,6 +67,6 @@ class Renderer
     {
         ob_start();
         $view = $this->get()->render($template, $arguments) ?: ob_get_clean();
-        return $this->response->body($view);
+        return $this->response->withBody($view);
     }
 }
