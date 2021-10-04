@@ -2,7 +2,7 @@
 
 return [
     'default' => 'max',
-    'path'    => '../views/',
+    'path'    => realpath(__DIR__ . '/../views/'),
     'max'     => [
         'handler' => \Max\View\Engines\Max::class,
         'options' => [
