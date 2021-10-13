@@ -78,7 +78,7 @@ return [
 
 ## 助手函数
 
-安装完成后就可以使用`\Max\Facade\View::render($template, $arguments);`等的方式来使用缓存扩展，或者使用助手函数`view()`
+安装完成后就可以使用`\Max\Facades\View::render($template, $arguments);`等的方式来使用缓存扩展，或者使用助手函数`view()`
 
 > 官网：https://www.chengyao.xyz
 
@@ -147,5 +147,5 @@ return [
 
 ## 助手函数
 
-安装完成后就可以使用`\Max\Facade\View::render($template, $arguments);`等的方式来使用视图扩展，或者使用助手函数`view($template, $arguments)`
+安装完成后就可以使用`\Max\Facades\View::render($template, $arguments);`等的方式来使用视图扩展，或者使用助手函数`view($template, $arguments)`
 

@@ -2,7 +2,7 @@
 
 namespace Max\View;
 
-use Max\Facade\File;
+use Max\Facades\Filesystem;
 
 class Compiler
 {
@@ -21,20 +21,24 @@ class Compiler
 
     /**
      * 编译目录
+     *
      * @var
      */
     protected $compilePath;
 
     /**
      * 缓存标识
+     *
      * @var
      */
     protected $cache;
 
     /**
      * 模板渲染
+     *
      * @param string $template
-     * @param array $arguments
+     * @param array  $arguments
+     *
      * @throws \Exception
      */
     public function render(string $template, array $arguments)
@@ -42,9 +46,9 @@ class Compiler
         $template     = $this->viewPath . $template;
         $data         = $this->replace($this->getTemplateFile($template));
         $compiledFile = $this->compilePath . md5($template) . '.php';
-        if (false === $this->cache || false === file_exists($compiledFile)) {
-            !File::isDir($this->compilePath) && \Max\Facade\File::mkdir($this->compilePath);
-            file_put_contents($compiledFile, $data);
+        if (false === $this->cache || false === Filesystem::exists($compiledFile)) {
+            !Filesystem::isDirectory($this->compilePath) && Filesystem::makeDirectory($this->compilePath);
+            Filesystem::put($compiledFile, $data);
         }
         extract($arguments);
         include $compiledFile;
@@ -52,7 +56,9 @@ class Compiler
 
     /**
      * 设置编译文件目录
+     *
      * @param $path
+     *
      * @return $this
      */
     public function setCompilePath($path): Compiler
@@ -63,21 +69,25 @@ class Compiler
 
     /**
      * 获取模板路径
+     *
      * @param $template
+     *
      * @return false|string
      * @throws \Exception
      */
     public function getTemplateFile($template)
     {
-        if (!file_exists($template)) {
+        if (!Filesystem::exists($template)) {
             throw new \Exception('Template ' . $template . ' does not exist');
         }
-        return file_get_contents($template);
+        return Filesystem::put($template);
     }
 
     /**
      * debug开关
+     *
      * @param bool $debug
+     *
      * @return $this
      */
     public function debug(bool $debug): Compiler
@@ -88,7 +98,9 @@ class Compiler
 
     /**
      * 设置视图目录
+     *
      * @param string $path
+     *
      * @return $this
      */
     public function setViewPath(string $path): Compiler
@@ -99,7 +111,9 @@ class Compiler
 
     /**
      * 是否缓存
+     *
      * @param bool $cache
+     *
      * @return $this
      */
     public function cache(bool $cache): Compiler
@@ -110,7 +124,9 @@ class Compiler
 
     /**
      * 模板字符串替换方法
+     *
      * @param $template
+     *
      * @return string|string[]|null
      */
     public function replace($template)
