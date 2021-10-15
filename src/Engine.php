@@ -11,7 +11,6 @@ use Max\Config;
  */
 abstract class Engine
 {
-
     protected $handler;
 
     /**

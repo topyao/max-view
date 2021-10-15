@@ -6,7 +6,6 @@ namespace Max\View {
 
     class ViewServiceProvider extends ServiceProvider
     {
-
         public function register()
         {
             $this->app->alias('view', Renderer::class);
@@ -16,10 +15,9 @@ namespace Max\View {
         {
             $this->app->env->set(
                 'view_path',
-                $this->app->config->get('view.path', $this->app->env->get('root_path') . 'views/')
+                rtrim($this->app->config->get('view.path', $this->app->env->get('root_path') . 'views/'), '/') . '/'
             );
         }
-
     }
 }
 

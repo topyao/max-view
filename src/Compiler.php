@@ -6,7 +6,6 @@ use Max\Facades\Filesystem;
 
 class Compiler
 {
-
     /**
      * 调试模式
      * bool @var
@@ -80,11 +79,11 @@ class Compiler
         if (!Filesystem::exists($template)) {
             throw new \Exception('Template ' . $template . ' does not exist');
         }
-        return Filesystem::put($template);
+        return Filesystem::get($template);
     }
 
     /**
-     * debug开关
+     * debug
      *
      * @param bool $debug
      *

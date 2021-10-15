@@ -7,8 +7,12 @@ use Max\View\Engine;
 
 class Max extends Engine
 {
+
+    protected $suffix = '.html';
+
     /**
      * 初始化
+     *
      * @throws \Exception
      */
     public function __construct($options)
