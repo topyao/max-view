@@ -3,38 +3,60 @@ declare(strict_types=1);
 
 namespace Max\View\Engines;
 
-use Max\Config;
 use Max\View\Engine;
 
 class Smarty extends Engine
 {
 
     /**
+     * 后缀
+     *
+     * @var string
+     */
+    protected string $suffix = '';
+
+    /**
+     * 调试
+     *
+     * @var bool
+     */
+    protected bool $debug = false;
+
+    /**
+     * 缓存
+     *
+     * @var bool
+     */
+    protected bool $cache = false;
+
+    /**
+     * 左边界
+     *
+     * @var string
+     */
+    protected string $leftDelimiter;
+
+    /**
+     * 右边界
+     *
+     * @var string
+     */
+    protected string $rightDelimiter;
+
+    /**
      * Smarty配置
      */
     public function __construct(array $options)
     {
+        parent::__construct($options);
         $this->handler                  = new \Smarty();
-        $this->handler->debugging       = $options['debug'];
-        $this->handler->caching         = $options['cache'];
-        $this->handler->left_delimiter  = $options['left_delimiter'];
-        $this->handler->right_delimiter = $options['right_delimiter'];
-        $this->handler
-            ->setTemplateDir(env('view_path'))
+        $this->handler->debugging       = $this->debug;
+        $this->handler->caching         = $this->cache;
+        $this->handler->left_delimiter  = $this->leftDelimiter;
+        $this->handler->right_delimiter = $this->rightDelimiter;
+        $this->handler->setTemplateDir(env('view_path'))
             ->setCompileDir(env('cache_path') . 'views/compile/')
             ->setCacheDir(env('cache_path') . 'views/cache');
-    }
-
-    /**
-     * TODO
-     *
-     * @param $template
-     *
-     * @return mixed
-     */
-    protected function getTemplate($template)
-    {
-        return $this->handler->getTemplateDir(0) . $template . '.html';
     }
 
     public function render(string $template, array $arguments = [])
@@ -42,6 +64,6 @@ class Smarty extends Engine
         foreach ($arguments as $key => $value) {
             $this->handler->assign($key, $value);
         }
-        return $this->handler->display($this->getTemplate($template));
+        return $this->handler->display($template . $this->suffix);
     }
 }

@@ -8,7 +8,26 @@ use Max\View\Engine;
 class Max extends Engine
 {
 
-    protected $suffix = '.html';
+    /**
+     * 调试
+     *
+     * @var bool
+     */
+    protected bool $debug = false;
+
+    /**
+     * 缓存
+     *
+     * @var bool
+     */
+    protected bool $cache = false;
+
+    /**
+     * 后缀
+     *
+     * @var string
+     */
+    protected string $suffix = '';
 
     /**
      * 初始化
@@ -17,24 +36,17 @@ class Max extends Engine
      */
     public function __construct($options)
     {
-        foreach ($options as $key => $option) {
-            $this->$key = $option;
-        }
+        parent::__construct($options);
         $this->handler = (new Compiler())
             ->setViewPath(env('view_path'))
             ->setCompilePath(env('cache_path') . 'views/compile/')
-            ->cache($options['cache'] ?? false);
-    }
-
-    public function getTemplate(string $template)
-    {
-        return $template . $this->suffix;
+            ->cache($this->cache);
     }
 
     public function render(string $template, array $arguments = [])
     {
         try {
-            return $this->handler->render($this->getTemplate($template), $arguments);
+            return $this->handler->render($template . $this->suffix, $arguments);
         } catch (\Exception $e) {
             ob_clean();
             throw $e;

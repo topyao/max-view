@@ -58,7 +58,7 @@ class Renderer
     public function render($template, $arguments = [])
     {
         ob_start();
-        $view = $this->get()->render($template, $arguments) ?: ob_get_clean();
-        return Response::html($view);
+        echo $this->get()->render($template, $arguments);
+        return Response::html((string)ob_get_clean());
     }
 }
