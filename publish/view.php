@@ -11,7 +11,7 @@ return [
             //模板缓存
             'cache'  => false,
             //模板后缀
-            'suffix' => 'html',
+            'suffix' => '.html',
         ],
     ],
     'twig'    => [
@@ -22,21 +22,21 @@ return [
             //模板缓存
             'cache'  => false,
             //模板后缀
-            'suffix' => 'html',
+            'suffix' => '.html',
         ],
     ],
     'smarty'  => [
         'handler' => \Max\View\Engines\Smarty::class,
         'options' => [
             //模板调试
-            'debug'           => false,
+            'debug'          => false,
             //模板缓存
-            'cache'           => false,
+            'cache'          => false,
             //模板后缀
-            'suffix'          => 'html',
+            'suffix'         => '.html',
             //左右边界
-            'left_delimiter'  => '{{',
-            'right_delimiter' => '}}',
+            'leftDelimiter'  => '{{',
+            'rightDelimiter' => '}}',
         ],
     ],
 ];
