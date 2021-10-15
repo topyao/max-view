@@ -22,12 +22,14 @@ class Smarty extends Engine
         $this->handler
             ->setTemplateDir(env('view_path'))
             ->setCompileDir(env('cache_path') . 'views/compile/')
-            ->setCacheDir(env('cache_path') . 'views/');
+            ->setCacheDir(env('cache_path') . 'views/cache');
     }
 
     /**
      * TODO
+     *
      * @param $template
+     *
      * @return mixed
      */
     protected function getTemplate($template)

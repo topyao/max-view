@@ -22,7 +22,7 @@ class Max extends Engine
         }
         $this->handler = (new Compiler())
             ->setViewPath(env('view_path'))
-            ->setCompilePath(env('cache_path') . 'views/')
+            ->setCompilePath(env('cache_path') . 'views/compile/')
             ->cache($options['cache'] ?? false);
     }
 

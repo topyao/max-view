@@ -42,15 +42,20 @@ class Compiler
      */
     public function render(string $template, array $arguments)
     {
+        extract($arguments);
+        include $this->getTemplateDir($template);
+    }
+
+    protected function getTemplateDir($template = '')
+    {
         $template     = $this->viewPath . $template;
         $data         = $this->replace($this->getTemplateFile($template));
         $compiledFile = $this->compilePath . md5($template) . '.php';
         if (false === $this->cache || false === Filesystem::exists($compiledFile)) {
-            !Filesystem::isDirectory($this->compilePath) && Filesystem::makeDirectory($this->compilePath);
+            !Filesystem::isDirectory($this->compilePath) && Filesystem::makeDirectory($this->compilePath, 0755, true);
             Filesystem::put($compiledFile, $data);
         }
-        extract($arguments);
-        include $compiledFile;
+        return $compiledFile;
     }
 
     /**

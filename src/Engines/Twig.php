@@ -11,16 +11,18 @@ class Twig extends Engine
 {
     public function __construct($options)
     {
-        $loader = new FilesystemLoader(env('view_path'));
+        $loader        = new FilesystemLoader(env('view_path'));
         $this->handler = new Environment($loader, [
             'debug' => $this->config['debug'],
-            'cache' => $this->config['cache'] ? env('cache_path') . 'views/' : false,
+            'cache' => $this->config['cache'] ? env('cache_path') . 'views/cache/' : false,
         ]);
     }
 
     /**
      * 渲染模板
+     *
      * @param array $arguments
+     *
      * @return mixed
      */
     public function render($arguments = [])
