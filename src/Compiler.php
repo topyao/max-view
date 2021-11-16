@@ -3,6 +3,7 @@
 namespace Max\View;
 
 use Max\Facades\Filesystem;
+use Max\View\Compiler\Rules;
 
 class Compiler
 {
@@ -136,26 +137,8 @@ class Compiler
     public function replace($template)
     {
         $compiled = preg_replace(
-            [
-                '/\{\{include [\'"]?(.*)[\'"]?\}\}/',
-                '/\{\{(\$[\w]+)\}\}/',
-                '/\{\{foreach (.+) as (.+)\}\}/',
-                '/\{\{\/foreach\}\}/',
-                '/\{\{(.*)\|(.*)\}\}/',
-                '/\{\{if (.*)\}\}/',
-                '/\{\{\/if\}\}/',
-                '/\{\{(\w+)\(([\$\w]*)\)\}\}/'
-            ],
-            [
-                '<?php include(\'\1\'); ?>',
-                '<?php echo \1; ?>',
-                '<?php foreach(\1 as \2): ?>',
-                '<?php endforeach; ?>',
-                '<?php echo \2(\1); ?>',
-                '<?php if(\1): ?>',
-                '<?php endif; ?>',
-                '<?php echo \1(\2) ?>',
-            ],
+            array_keys(Rules::RULES),
+            array_values(Rules::RULES),
             $template
         );
         return $compiled;

@@ -11,7 +11,7 @@ return [
             //模板缓存
             'cache'  => false,
             //模板后缀
-            'suffix' => '.html',
+            'suffix' => '.blade.php',
         ],
     ],
     'twig'    => [
