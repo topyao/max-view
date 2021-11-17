@@ -24,7 +24,9 @@ class Substitute
 
     public static function compileYield($matches)
     {
-        return trim(self::$sections[$matches[1]] ?? '');
+        $value = explode('\',\'', str_replace(' ', '', $matches[1]));
+
+        return trim(self::$sections[$value[0]] ?? ($value[1] ?? ''));
     }
 
     public static function compileSection($matches)
@@ -111,15 +113,15 @@ class Substitute
 
     public static function compile($template)
     {
-        $stream = self::com($template);
+        $stream = self::replace($template);
         if (isset(self::$parent)) {
-            $stream       = self::com(file_get_contents(self::$parent));
+            $stream       = self::replace(file_get_contents(self::$parent));
             self::$parent = null;
         }
         return $stream;
     }
 
-    protected static function com($f)
+    protected static function replace($f)
     {
         return preg_replace_callback_array(self::$rules, $f);
     }
