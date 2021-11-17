@@ -10,16 +10,16 @@ class Substitute
     protected static $parent;
 
     protected static $rules = [
-        '/@extends\([\'"](.*?)[\'"]\)/'                                                           => [self::class, 'compileExtends'],
-        '/@yield\([\'"]?(.*?)[\'"]?\)/'                                                           => [self::class, 'compileYield'],
-        '/@php([\s\S]*?)@endphp/'                                                                 => [self::class, 'compilePHP'],
-        '/\{\{(.*?)\}\}/'                                                                         => [self::class, 'compileEcho'],
-        '/@include\([\'"](.*?)[\'"]\)/'                                                           => [self::class, 'compileInclude'],
-        '/(@if|@unless|@empty|@isset)\((.*?)\)([\s\S]*?)(@endif|@endunless|@endempty|@endisset)/' => [self::class, 'compileEndif'],
-        '/@foreach\((.*?)\)([\s\S]*?)@endforeach/'                                                => [self::class, 'compileForeach'],
-        '/@for\((.*?)\)([\s\S]*?)@endfor/'                                                        => [self::class, 'compileFor'],
-        '/@switch\((.*?)\)([\s\S]*?)@endswitch/'                                                  => [self::class, 'compileSwitch'],
-        '/@section\([\'"](.*?)[\'"]\)([\s\S]*?)@endsection/'                                      => [self::class, 'compileSection'],
+        '/@extends\([\'"](.*?)[\'"]\)/'                                                          => [self::class, 'compileExtends'],
+        '/@yield\([\'"]?(.*?)[\'"]?\)/'                                                          => [self::class, 'compileYield'],
+        '/@php([\s\S]*?)@endphp/'                                                                => [self::class, 'compilePHP'],
+        '/\{\{(.*?)\}\}/'                                                                        => [self::class, 'compileEcho'],
+        '/@include\([\'"](.*?)[\'"]\)/'                                                          => [self::class, 'compileInclude'],
+        '/(@if|@unless|@empty|@isset)\((.*)\)([\s\S]*?)(@endif|@endunless|@endempty|@endisset)/' => [self::class, 'compileEndif'],
+        '/@foreach\((.*?)\)([\s\S]*?)@endforeach/'                                               => [self::class, 'compileForeach'],
+        '/@for\((.*?)\)([\s\S]*?)@endfor/'                                                       => [self::class, 'compileFor'],
+        '/@switch\((.*?)\)([\s\S]*?)@endswitch/'                                                 => [self::class, 'compileSwitch'],
+        '/@section\([\'"](.*?)[\'"]\)([\s\S]*?)@endsection/'                                     => [self::class, 'compileSection'],
     ];
 
     public static function compileYield($matches)
@@ -41,7 +41,7 @@ class Substitute
     public static function compileInclude($matches)
     {
         $view = config('view.path') . '/' . $matches[1] . config('view.max.options.suffix');
-        return self::compile(file_get_contents($view));
+        return self::com(file_get_contents($view));
     }
 
     public static function compileEndif($matches)
@@ -113,7 +113,7 @@ class Substitute
     {
         $stream = self::com($template);
         if (isset(self::$parent)) {
-            $stream = self::com(file_get_contents(self::$parent));
+            $stream       = self::com(file_get_contents(self::$parent));
             self::$parent = null;
         }
         return $stream;
