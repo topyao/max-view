@@ -51,7 +51,7 @@ class Compiler
     protected function getTemplateDir($template = '')
     {
         $template     = $this->viewPath . $template;
-        $data         = Substitute::compile($template)($this->getTemplateFile($template));
+        $data         = Substitute::compile($this->getTemplateFile($template));
         $compiledFile = $this->compilePath . md5($template) . '.php';
         if (false === $this->cache || false === Filesystem::exists($compiledFile)) {
             !Filesystem::isDirectory($this->compilePath) && Filesystem::makeDirectory($this->compilePath, 0755, true);

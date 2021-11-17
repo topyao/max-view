@@ -43,7 +43,7 @@ class Substitute
     public static function compileInclude($matches)
     {
         $view = config('view.path') . '/' . $matches[1] . config('view.max.options.suffix');
-        return self::com(file_get_contents($view));
+        return self::replace(file_get_contents($view));
     }
 
     public static function compileEndif($matches)
