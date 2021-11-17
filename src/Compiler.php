@@ -4,6 +4,7 @@ namespace Max\View;
 
 use Max\Facades\Filesystem;
 use Max\View\Compiler\Rules;
+use Max\View\Compiler\Substitute;
 
 class Compiler
 {
@@ -136,11 +137,6 @@ class Compiler
      */
     public function replace($template)
     {
-        $compiled = preg_replace(
-            array_keys(Rules::RULES),
-            array_values(Rules::RULES),
-            $template
-        );
-        return $compiled;
+        return Substitute::compile($template);
     }
 }
