@@ -4,9 +4,9 @@ return [
     'engine' => \Max\View\Engines\Blade::class,
     'options' => [
         // 模板目录
-        'path' => realpath(__DIR__ . '/../views/'),
+        'path' => __DIR__ . '/../views/',
         // 编译和缓存目录
-        'compile_dir' => realpath(__DIR__ . '/../storage/cache/views/compiled'),
+        'compile_dir' => __DIR__ . '/../storage/cache/views/compiled',
         // 模板调试
         'debug' => false,
         // 模板缓存
@@ -16,7 +16,7 @@ return [
     ],
 //    'engine' => \Max\View\Engines\Twig::class,
 //    'options' => [
-//        'path' => realpath(__DIR__ . '/../views/'),
+//        'path' => __DIR__ . '/../views/',
 //        //模板调试
 //        'debug' => false,
 //        //模板缓存或者缓存路径
@@ -28,9 +28,9 @@ return [
 //    'engine' => \Max\View\Engines\Smarty::class,
 //    'options' => [
 //        // 模板目录
-//        'path' => realpath(__DIR__ . '/../views/'),
-//        'compile_dir' => realpath(__DIR__ . '/../storage/cache/views/compiled'),
-//        'cache_dir' => realpath(__DIR__ . '/../storage/cache/views/compiled'),
+//        'path' => __DIR__ . '/../views/',
+//        'compile_dir' => __DIR__ . '/../storage/cache/views/compiled',
+//        'cache_dir' => __DIR__ . '/../storage/cache/views/cached',
 //        //模板调试
 //        'debug' => false,
 //        //模板缓存
