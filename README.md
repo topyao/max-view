@@ -11,7 +11,8 @@
 <img src="https://img.shields.io/badge/license-apache%202-blue">
 </p>
 
-MaxPHP视图组件，支持Blade，Smarty，Twig
+MaxPHP视图组件，支持Blade，Smarty，Twig。 可以独立使用!
+
 # 安装
 
 ```
@@ -23,7 +24,7 @@ composer require max/view:dev-master
 > Blade 可能会有未知的Bug，使用时需要注意，Blade引擎支持的语法如下
 
 - {{}}
-- {{--  --}}
+- {{-- --}}
 - @extends
 - @yield
 - @php
@@ -91,8 +92,30 @@ return [
 
 ```
 
-## 助手函数
+## 使用
 
-安装完成后就可以使用`\Max\Foundation\Facades\View::render($template, array $arguments = []);`等的方式来使用缓存扩展，或者使用助手函数`view()`
+> 以下以`Blade`为例
+
+```php
+// 实例化Blade
+$blade = new Blade(config('view.options'));
+// 实例化渲染器，传入Blade
+$renderer = new Renderer($blade);
+// 渲染模板
+return $renderer->render('index', ['test' => ['123']]);
+```
+
+### 自定义引擎
+
+自定义引擎必须实现`ViewEngineInterface`接口, 将新的引擎实例传递给渲染器即可
+
+### 助手函数
+> 如果你使用MaxPHP, 则可以使用助手函数和门面
+
+```php
+\Max\Foundation\Facades\View::render($template, array $arguments = []);
+
+view($template, array $arguments = []);
+```
 
 > 官网：https://www.chengyao.xyz
