@@ -3,62 +3,43 @@ declare(strict_types=1);
 
 namespace Max\View;
 
-use Max\Http\Response;
+use Max\View\Contracts\ViewEngineInterface;
 
 class Renderer
 {
+    /**
+     * @var ViewEngineInterface
+     */
+    protected ViewEngineInterface $viewEngine;
 
     /**
-     * 容器实例
-     *
-     * @var App
+     * Renderer constructor.
+     * @param ViewEngineInterface $viewEngine
      */
-    protected $app;
-
-    /**
-     * Render constructor.
-     *
-     * @param App $app
-     */
-    public function __construct(array $config)
+    public function __construct(ViewEngineInterface $viewEngine)
     {
-        $this->config = $config;
-    }
-
-    public static function __setter(\Max\Foundation\App $app)
-    {
-        return new static($app->config->get('view'));
+        $this->viewEngine = $viewEngine;
     }
 
     /**
-     * @param string $key
-     *
-     * @return Engine
-     */
-    public function get($key = 'default')
-    {
-        if ('default' === $key) {
-            $key = $this->config[$key];
-        }
-        $handler = $this->config[$key]['handler'];
-        return new $handler($this->config[$key]['options']);
-    }
-
-    /**
-     * 模板渲染方法
-     *
-     * @param       $template
-     * 模板名
+     * @param string $template
      * @param array $arguments
-     * 参数
-     *
-     * @return mixed
-     * @throws \Exception
+     * @return false|string
      */
-    public function render($template, $arguments = [])
+    public function render(string $template, array $arguments = [])
     {
         ob_start();
-        echo $this->get()->render($template, $arguments);
-        return Response::html((string)ob_get_clean());
+        echo (string)$this->viewEngine->render($template, $arguments);
+        return ob_get_clean();
+    }
+
+    /**
+     * @param $method
+     * @param $args
+     * @return mixed
+     */
+    public function __call($method, $args)
+    {
+        return $this->viewEngine->{$method}($args);
     }
 }
