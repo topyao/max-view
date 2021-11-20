@@ -10,16 +10,16 @@ class Substitute
     protected static $parent;
 
     protected static $rules = [
-        '/@extends\([\'"](.*?)[\'"]\)/'                                                          => [self::class, 'compileExtends'],
-        '/@yield\([\'"]?(.*?)[\'"]?\)/'                                                          => [self::class, 'compileYield'],
-        '/@php([\s\S]*?)@endphp/'                                                                => [self::class, 'compilePHP'],
-        '/\{\{(.*?)\}\}/'                                                                        => [self::class, 'compileEcho'],
-        '/@include\([\'"](.*?)[\'"]\)/'                                                          => [self::class, 'compileInclude'],
+        '/@extends\([\'"](.*?)[\'"]\)/' => [self::class, 'compileExtends'],
+        '/@yield\([\'"]?(.*?)[\'"]?\)/' => [self::class, 'compileYield'],
+        '/@php([\s\S]*?)@endphp/' => [self::class, 'compilePHP'],
+        '/\{\{(-{2})?(.*?)(-{2})?\}\}/' => [self::class, 'compileEcho'],
+        '/@include\([\'"](.*?)[\'"]\)/' => [self::class, 'compileInclude'],
         '/(@if|@unless|@empty|@isset)\((.*)\)([\s\S]*?)(@endif|@endunless|@endempty|@endisset)/' => [self::class, 'compileEndif'],
-        '/@foreach\((.*?)\)([\s\S]*?)@endforeach/'                                               => [self::class, 'compileForeach'],
-        '/@for\((.*?)\)([\s\S]*?)@endfor/'                                                       => [self::class, 'compileFor'],
-        '/@switch\((.*?)\)([\s\S]*?)@endswitch/'                                                 => [self::class, 'compileSwitch'],
-        '/@section\([\'"](.*?)[\'"]\)([\s\S]*?)@endsection/'                                     => [self::class, 'compileSection'],
+        '/@foreach\((.*?)\)([\s\S]*?)@endforeach/' => [self::class, 'compileForeach'],
+        '/@for\((.*?)\)([\s\S]*?)@endfor/' => [self::class, 'compileFor'],
+        '/@switch\((.*?)\)([\s\S]*?)@endswitch/' => [self::class, 'compileSwitch'],
+        '/@section\([\'"](.*?)[\'"]\)([\s\S]*?)@endsection/' => [self::class, 'compileSection'],
     ];
 
     public static function compileYield($matches)
@@ -36,7 +36,7 @@ class Substitute
 
     public static function compileExtends($matches)
     {
-        $view         = config('view.path') . '/' . $matches[1] . config('view.max.options.suffix');
+        $view = config('view.path') . '/' . $matches[1] . config('view.max.options.suffix');
         self::$parent = $view;
     }
 
@@ -53,9 +53,9 @@ class Substitute
             case 'if':
                 $patterns = [
                     '/@elseif\((.*)\)/' => '<?php elseif(\\1): ?>',
-                    '/@else/'           => '<?php else: ?>',
+                    '/@else/' => '<?php else: ?>',
                 ];
-                $content  = preg_replace(array_keys($patterns), array_values($patterns), $content);
+                $content = preg_replace(array_keys($patterns), array_values($patterns), $content);
                 break;
             case 'unless':
                 $condition = "!($condition)";
@@ -72,15 +72,7 @@ class Substitute
 
     public static function compileEcho($matches)
     {
-        $value = $matches[1];
-        if (false !== strpos($value, '|')) {
-            $params = explode('|', $value);
-            $value  = array_shift($params);
-            while ($function = array_pop($params)) {
-                $value = sprintf('%s(%s)', trim($function), (string)$value);
-            }
-        }
-        return sprintf('<?php echo %s; ?>', $value);
+        return ('' === $matches[1]) ? sprintf('<?php echo %s; ?>', $matches[2]) : '';
     }
 
     public static function compileForeach($matches)
@@ -105,9 +97,9 @@ class Substitute
         [$condition, $segment] = array_slice($matches, 1);
         $patterns = [
             '/@case\((.*)\)/' => "<?php case \\1: ?>",
-            '/@default/'      => '<?php default: ?>',
+            '/@default/' => '<?php default: ?>',
         ];
-        $segment  = preg_replace(array_keys($patterns), array_values($patterns), $segment);
+        $segment = preg_replace(array_keys($patterns), array_values($patterns), $segment);
         return sprintf('<?php switch(%s): ?>%s<?php endswitch; ?>', $condition, trim($segment));
     }
 
@@ -115,7 +107,7 @@ class Substitute
     {
         $stream = self::replace($template);
         if (isset(self::$parent)) {
-            $stream       = self::replace(file_get_contents(self::$parent));
+            $stream = self::replace(file_get_contents(self::$parent));
             self::$parent = null;
         }
         return $stream;
