@@ -2,129 +2,223 @@
 
 namespace Max\View;
 
-use Max\Foundation\Facades\Filesystem;
-use Max\View\Compiler\Rules;
-use Max\View\Compiler\Substitute;
+use Max\View\Engines\Blade;
+use Max\View\Exceptions\ViewNotExistException;
 
 class Compiler
 {
     /**
-     * 调试模式
-     * bool @var
+     * @var array
      */
-    protected $debug;
+    protected array $sections = [];
 
     /**
-     * 缓存路径
-     * string @var
+     * @var string|null
      */
-    protected $viewPath;
+    protected ?string $parent;
 
     /**
-     * 编译目录
-     *
-     * @var
+     * @var Blade
      */
-    protected $compilePath;
+    protected Blade $blade;
 
     /**
-     * 缓存标识
-     *
-     * @var
+     * Compiler constructor.
+     * @param Blade $blade
      */
-    protected $cache;
-
-    /**
-     * 模板渲染
-     *
-     * @param string $template
-     * @param array  $arguments
-     *
-     * @throws \Exception
-     */
-    public function render(string $template, array $arguments)
+    public function __construct(Blade $blade)
     {
-        extract($arguments);
-        include $this->getTemplateDir($template);
+        $this->blade = $blade;
     }
 
-    protected function getTemplateDir($template = '')
+    /**
+     * 读模板
+     * @param $template
+     * @return mixed
+     * @throws \Exception
+     */
+    protected function readFile($template)
     {
-        $template     = $this->viewPath . $template;
-        $data         = Substitute::compile($this->getTemplateFile($template));
-        $compiledFile = $this->compilePath . md5($template) . '.php';
-        if (false === $this->cache || false === Filesystem::exists($compiledFile)) {
-            !Filesystem::isDirectory($this->compilePath) && Filesystem::makeDirectory($this->compilePath, 0755, true);
-            Filesystem::put($compiledFile, $data);
+        if (file_exists($template)) {
+            return file_get_contents($template);
         }
+        throw new ViewNotExistException('View ' . $template . ' does not exist');
+    }
+
+    /**
+     * @param $template
+     * @return string
+     */
+    protected function getRealPath($template): string
+    {
+        return sprintf('%s/%s%s',
+            trim($this->blade->getPath(), '/'),
+            $template,
+            $this->blade->getSuffix()
+        );
+    }
+
+    /**
+     * 编译
+     * @param $template
+     * @return string
+     */
+    public function compile($template): string
+    {
+        $compileDir = $this->blade->getCompileDir();
+        $compiledFile = $compileDir . md5($template) . '.php';
+
+        if (false === $this->blade->isCacheable() || false === file_exists($compiledFile)) {
+            !is_dir($compileDir) && mkdir($compileDir, 0755, true);
+            $stream = $this->compileView($template);
+            while (isset($this->parent)) {
+                $parent = $this->parent;
+                $this->parent = null;
+                $stream = $this->compileView($parent);
+            }
+            file_put_contents($compiledFile, $stream);
+        }
+
         return $compiledFile;
     }
 
     /**
-     * 设置编译文件目录
-     *
-     * @param $path
-     *
-     * @return $this
-     */
-    public function setCompilePath($path): Compiler
-    {
-        $this->compilePath = $path;
-        return $this;
-    }
-
-    /**
-     * 获取模板路径
-     *
-     * @param $template
-     *
-     * @return false|string
+     * 编译文件
+     * @param string $file
+     * @return array|string|string[]|null
      * @throws \Exception
      */
-    public function getTemplateFile($template)
+    protected function compileView(string $file)
     {
-        if (!Filesystem::exists($template)) {
-            throw new \Exception('Template ' . $template . ' does not exist');
+        return preg_replace_callback_array([
+            '/@extends\([\'"](.*?)[\'"]\)/' => [$this, 'compileExtends'],
+            '/@yield\([\'"]?(.*?)[\'"]?\)/' => [$this, 'compileYield'],
+            '/@php([\s\S]*?)@endphp/' => [$this, 'compilePHP'],
+            '/\{\{(?!--)(.*?)(?<!--)\}\}/' => [$this, 'compileEcho'],
+            '/\{\{(?:--).*?--(?:\}\})/' => [$this, 'compileComment'],
+            '/@include\([\'"](.*?)[\'"]\)/' => [$this, 'compileInclude'],
+            '/(@if|@unless|@empty|@isset)\((.*)\)([\s\S]*?)(@endif|@endunless|@endempty|@endisset)/' => [$this, 'compileConditions'],
+            '/@foreach\((.*?)\)([\s\S]*?)@endforeach/' => [$this, 'compileForeach'],
+            '/@for\((.*?)\)([\s\S]*?)@endfor/' => [$this, 'compileFor'],
+            '/@switch\((.*?)\)([\s\S]*?)@endswitch/' => [$this, 'compileSwitch'],
+            '/@section\([\'"](.*?)[\'"]\)([\s\S]*?)@endsection/' => [$this, 'compileSection'],
+        ], $this->readFile($this->getRealPath($file)));
+    }
+
+    /**
+     * @param $matches
+     * @return string
+     */
+    protected function compileYield($matches): string
+    {
+        $value = explode('\',\'', $matches[1], 2);
+
+        return trim($this->sections[trim($value[0])] ?? (trim($value[1] ?? '')));
+    }
+
+    /**
+     * @param $matches
+     */
+    protected function compileSection($matches)
+    {
+        $this->sections[$matches[1]] = $matches[2];
+    }
+
+    /**
+     * @param $matches
+     */
+    protected function compileExtends($matches)
+    {
+        $this->parent = $matches[1];
+    }
+
+    /**
+     * @param $matches
+     * @return array|string|string[]|null
+     * @throws \Exception
+     */
+    protected function compileInclude($matches)
+    {
+        return $this->compileView($matches[1]);
+    }
+
+    /**
+     * @param $matches
+     * @return string
+     */
+    protected function compileConditions($matches): string
+    {
+        [$statement, $condition, $content] = array_slice($matches, 1);
+        switch ($statement = str_replace('@', '', $statement)) {
+            case 'if':
+                $content = preg_replace(
+                    ['/@elseif\((.*)\)/', '/@else/'],
+                    ['<?php elseif(\\1): ?>', '<?php else: ?>']
+                    , $content
+                );
+                break;
+            case 'unless':
+                $condition = "!($condition)";
+                break;
+            default:
+                $condition = sprintf('%s(%s)', $statement, $condition);
+                break;
         }
-        return Filesystem::get($template);
+        return sprintf('<?php if (%s): ?>%s<?php endif; ?>', $condition, $content);
     }
 
     /**
-     * debug
-     *
-     * @param bool $debug
-     *
-     * @return $this
+     * @param $matches
+     * @return string
      */
-    public function debug(bool $debug): Compiler
+    protected function compileEcho($matches): string
     {
-        $this->debug = $debug;
-        return $this;
+        return sprintf('<?php echo %s; ?>', $matches[1]);
     }
 
     /**
-     * 设置视图目录
-     *
-     * @param string $path
-     *
-     * @return $this
+     * @param $matches
+     * @return string
      */
-    public function setViewPath(string $path): Compiler
+    protected function compileForeach($matches): string
     {
-        $this->viewPath = $path;
-        return $this;
+        [$condition, $segment] = array_slice($matches, 1);
+        return sprintf('<?php foreach (%s): ?>%s<?php endforeach; ?>', $condition, $segment);
     }
 
     /**
-     * 是否缓存
-     *
-     * @param bool $cache
-     *
-     * @return $this
+     * @param $matches
+     * @return string
      */
-    public function cache(bool $cache): Compiler
+    protected function compileFor($matches): string
     {
-        $this->cache = $cache;
-        return $this;
+        [$condition, $segment] = array_slice($matches, 1);
+        return sprintf('<?php for (%s): ?>%s<?php endfor; ?>', $condition, $segment);
     }
+
+    /**
+     * @param $matches
+     * @return string
+     */
+    protected function compilePHP($matches): string
+    {
+        return sprintf("<?php%s?>", $matches[1]);
+    }
+
+    /**
+     * @param $matches
+     * @return string
+     */
+    protected function compileSwitch($matches): string
+    {
+        [$condition, $segment] = array_slice($matches, 1);
+        $segment = preg_replace(
+            ['/@case\((.*)\)/', '/@default/',],
+            ["<?php case \\1: ?>", '<?php default: ?>',],
+            $segment
+        );
+
+        return sprintf('<?php switch(%s): ?>%s<?php endswitch; ?>', $condition, trim($segment));
+    }
+
 }
