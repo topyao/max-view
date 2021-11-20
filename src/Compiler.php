@@ -95,7 +95,6 @@ class Compiler
             '/@yield\([\'"]?(.*?)[\'"]?\)/' => [$this, 'compileYield'],
             '/@php([\s\S]*?)@endphp/' => [$this, 'compilePHP'],
             '/\{\{(?!--)(.*?)(?<!--)\}\}/' => [$this, 'compileEcho'],
-            '/\{\{(?:--).*?--(?:\}\})/' => [$this, 'compileComment'],
             '/@include\([\'"](.*?)[\'"]\)/' => [$this, 'compileInclude'],
             '/(@if|@unless|@empty|@isset)\((.*)\)([\s\S]*?)(@endif|@endunless|@endempty|@endisset)/' => [$this, 'compileConditions'],
             '/@foreach\((.*?)\)([\s\S]*?)@endforeach/' => [$this, 'compileForeach'],
