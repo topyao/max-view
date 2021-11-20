@@ -2,7 +2,7 @@
 
 namespace Max\View;
 
-use Max\Facades\Filesystem;
+use Max\Foundation\Facades\Filesystem;
 use Max\View\Compiler\Rules;
 use Max\View\Compiler\Substitute;
 
