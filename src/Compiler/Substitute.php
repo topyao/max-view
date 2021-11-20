@@ -13,7 +13,8 @@ class Substitute
         '/@extends\([\'"](.*?)[\'"]\)/' => [self::class, 'compileExtends'],
         '/@yield\([\'"]?(.*?)[\'"]?\)/' => [self::class, 'compileYield'],
         '/@php([\s\S]*?)@endphp/' => [self::class, 'compilePHP'],
-        '/\{\{(-{2})?(.*?)(-{2})?\}\}/' => [self::class, 'compileEcho'],
+        '/\{\{(?!--)(.*?)(?<!--)\}\}/' => [self::class, 'compileEcho'],
+        '/\{\{(?:--).*?--(?:\}\})/' => [self::class, 'compileComment'],
         '/@include\([\'"](.*?)[\'"]\)/' => [self::class, 'compileInclude'],
         '/(@if|@unless|@empty|@isset)\((.*)\)([\s\S]*?)(@endif|@endunless|@endempty|@endisset)/' => [self::class, 'compileEndif'],
         '/@foreach\((.*?)\)([\s\S]*?)@endforeach/' => [self::class, 'compileForeach'],
@@ -21,6 +22,11 @@ class Substitute
         '/@switch\((.*?)\)([\s\S]*?)@endswitch/' => [self::class, 'compileSwitch'],
         '/@section\([\'"](.*?)[\'"]\)([\s\S]*?)@endsection/' => [self::class, 'compileSection'],
     ];
+
+    public static function compileComment($matches)
+    {
+        return '';
+    }
 
     public static function compileYield($matches)
     {
@@ -72,7 +78,7 @@ class Substitute
 
     public static function compileEcho($matches)
     {
-        return ('' === $matches[1]) ? sprintf('<?php echo %s; ?>', $matches[2]) : '';
+        return sprintf('<?php echo %s; ?>', $matches[1]);
     }
 
     public static function compileForeach($matches)
