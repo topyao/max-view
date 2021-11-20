@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Max\View;
 
-use Max\Config;
+use Max\Config\Repository;
 
 /**
  * Class Driver

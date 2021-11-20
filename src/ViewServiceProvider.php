@@ -2,12 +2,13 @@
 
 namespace Max\View {
 
-    use Max\Config\Config;
+    use Max\Config\Repository;
     use Max\Env\Env;
     use Max\Foundation\ServiceProvider;
 
     class ViewServiceProvider extends ServiceProvider
     {
+        
         public function register()
         {
             $this->app->alias('view', Renderer::class);
@@ -19,7 +20,7 @@ namespace Max\View {
             $env = $this->app->make(Env::class);
             $env->set(
                 'view_path',
-                rtrim($this->app->make(Config::class)->get('view.path', $env->get('root_path') . 'views/'), '/') . '/'
+                rtrim($this->app->make(Repository::class)->get('view.path', $env->get('root_path') . 'views/'), '/') . '/'
             );
         }
     }
