@@ -24,6 +24,7 @@ class Compiler
 
     /**
      * Compiler constructor.
+     *
      * @param Blade $blade
      */
     public function __construct(Blade $blade)
@@ -33,7 +34,9 @@ class Compiler
 
     /**
      * 读模板
+     *
      * @param $template
+     *
      * @return mixed
      * @throws \Exception
      */
@@ -47,6 +50,7 @@ class Compiler
 
     /**
      * @param $template
+     *
      * @return string
      */
     protected function getRealPath($template): string
@@ -60,21 +64,23 @@ class Compiler
 
     /**
      * 编译
+     *
      * @param $template
+     *
      * @return string
      */
     public function compile($template): string
     {
-        $compileDir = $this->blade->getCompileDir();
+        $compileDir   = $this->blade->getCompileDir();
         $compiledFile = $compileDir . md5($template) . '.php';
 
         if (false === $this->blade->isCacheable() || false === file_exists($compiledFile)) {
             !is_dir($compileDir) && mkdir($compileDir, 0755, true);
             $stream = $this->compileView($template);
             while (isset($this->parent)) {
-                $parent = $this->parent;
+                $parent       = $this->parent;
                 $this->parent = null;
-                $stream = $this->compileView($parent);
+                $stream       = $this->compileView($parent);
             }
             file_put_contents($compiledFile, $stream);
         }
@@ -84,33 +90,36 @@ class Compiler
 
     /**
      * 编译文件
+     *
      * @param string $file
+     *
      * @return array|string|string[]|null
      * @throws \Exception
      */
     protected function compileView(string $file)
     {
         return preg_replace_callback_array([
-            '/@extends\([\'"](.*?)[\'"]\)/' => [$this, 'compileExtends'],
-            '/@yield\([\'"]?(.*?)[\'"]?\)/' => [$this, 'compileYield'],
-            '/@php([\s\S]*?)@endphp/' => [$this, 'compilePHP'],
-            '/\{\{(?!--)(.*?)(?<!--)\}\}/' => [$this, 'compileEcho'],
-            '/@include\([\'"](.*?)[\'"]\)/' => [$this, 'compileInclude'],
+            '/@extends\([\'"](.*?)[\'"]\)/'                                                          => [$this, 'compileExtends'],
+            '/@yield\([\'"]?(.*?)[\'"]?\)/'                                                          => [$this, 'compileYield'],
+            '/@php([\s\S]*?)@endphp/'                                                                => [$this, 'compilePHP'],
+            '/\{\{(?!--)(.*?)(?<!--)\}\}/'                                                           => [$this, 'compileEcho'],
+            '/@include\([\'"](.*?)[\'"]\)/'                                                          => [$this, 'compileInclude'],
             '/(@if|@unless|@empty|@isset)\((.*)\)([\s\S]*?)(@endif|@endunless|@endempty|@endisset)/' => [$this, 'compileConditions'],
-            '/@foreach\((.*?)\)([\s\S]*?)@endforeach/' => [$this, 'compileForeach'],
-            '/@for\((.*?)\)([\s\S]*?)@endfor/' => [$this, 'compileFor'],
-            '/@switch\((.*?)\)([\s\S]*?)@endswitch/' => [$this, 'compileSwitch'],
-            '/@section\([\'"](.*?)[\'"]\)([\s\S]*?)@endsection/' => [$this, 'compileSection'],
+            '/@foreach\((.*?)\)([\s\S]*?)@endforeach/'                                               => [$this, 'compileForeach'],
+            '/@for\((.*?)\)([\s\S]*?)@endfor/'                                                       => [$this, 'compileFor'],
+            '/@switch\((.*?)\)([\s\S]*?)@endswitch/'                                                 => [$this, 'compileSwitch'],
+            '/@section\([\'"](.*?)[\'"]\)([\s\S]*?)@endsection/'                                     => [$this, 'compileSection'],
         ], $this->readFile($this->getRealPath($file)));
     }
 
     /**
      * @param $matches
+     *
      * @return string
      */
     protected function compileYield($matches): string
     {
-        $value = explode('\',\'', $matches[1], 2);
+        $value = explode('\',\'', str_replace(' ', '', $matches[1]), 2);
 
         return trim($this->sections[trim($value[0])] ?? (trim($value[1] ?? '')));
     }
@@ -133,6 +142,7 @@ class Compiler
 
     /**
      * @param $matches
+     *
      * @return array|string|string[]|null
      * @throws \Exception
      */
@@ -143,6 +153,7 @@ class Compiler
 
     /**
      * @param $matches
+     *
      * @return string
      */
     protected function compileConditions($matches): string
@@ -168,6 +179,7 @@ class Compiler
 
     /**
      * @param $matches
+     *
      * @return string
      */
     protected function compileEcho($matches): string
@@ -177,6 +189,7 @@ class Compiler
 
     /**
      * @param $matches
+     *
      * @return string
      */
     protected function compileForeach($matches): string
@@ -187,6 +200,7 @@ class Compiler
 
     /**
      * @param $matches
+     *
      * @return string
      */
     protected function compileFor($matches): string
@@ -197,6 +211,7 @@ class Compiler
 
     /**
      * @param $matches
+     *
      * @return string
      */
     protected function compilePHP($matches): string
@@ -205,10 +220,11 @@ class Compiler
     }
 
     /**
-     * @param $matches
+     * @param array $matches
+     *
      * @return string
      */
-    protected function compileSwitch($matches): string
+    protected function compileSwitch(array $matches): string
     {
         [$condition, $segment] = array_slice($matches, 1);
         $segment = preg_replace(
