@@ -1,6 +1,6 @@
 <?php
 
-namespace Max\View;
+namespace Max\View\Engines\Blade;
 
 use Max\View\Engines\Blade;
 use Max\View\Exceptions\ViewNotExistException;
