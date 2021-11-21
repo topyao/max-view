@@ -2,7 +2,7 @@
 
 namespace Max\View\Engines;
 
-use Max\View\Compiler;
+use Max\View\Engines\Blade\Compiler;
 
 class Blade extends AbstractEngine
 {
