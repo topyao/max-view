@@ -3,7 +3,7 @@
   "type": "library",
   "license": "Apache-2.0",
   "homepage": "https://www.chengyao.xyz",
-  "description": "View engines for MaxPHP.",
+  "description": "一款可扩展的视图引擎，内置Blade引擎和Smarty, Twig驱动。",
   "authors": [
     {
       "name": "chengyao",
