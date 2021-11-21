@@ -52,7 +52,7 @@ class Compiler
     protected function getRealPath($template): string
     {
         return sprintf('%s/%s%s',
-            rtrim($this->blade->getPath(), '/'),
+            rtrim($this->blade->getPath(), DIRECTORY_SEPARATOR),
             $template,
             $this->blade->getSuffix()
         );
