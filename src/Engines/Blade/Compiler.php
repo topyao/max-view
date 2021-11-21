@@ -103,6 +103,7 @@ class Compiler
             '/@yield\([\'"]?(.*?)[\'"]?\)/'                                                          => [$this, 'compileYield'],
             '/@php([\s\S]*?)@endphp/'                                                                => [$this, 'compilePHP'],
             '/\{\{(?!--)(.*?)(?<!--)\}\}/'                                                           => [$this, 'compileEcho'],
+            '/\{\{(?:--).*?--(?:\}\})/'                                                              => [$this, 'compileAnnotation'],
             '/@include\([\'"](.*?)[\'"]\)/'                                                          => [$this, 'compileInclude'],
             '/(@if|@unless|@empty|@isset)\((.*)\)([\s\S]*?)(@endif|@endunless|@endempty|@endisset)/' => [$this, 'compileConditions'],
             '/@foreach\((.*?)\)([\s\S]*?)@endforeach/'                                               => [$this, 'compileForeach'],
@@ -110,6 +111,16 @@ class Compiler
             '/@switch\((.*?)\)([\s\S]*?)@endswitch/'                                                 => [$this, 'compileSwitch'],
             '/@section\([\'"](.*?)[\'"]\)([\s\S]*?)@endsection/'                                     => [$this, 'compileSection'],
         ], $this->readFile($this->getRealPath($file)));
+    }
+
+    /**
+     * @param array $matches
+     *
+     * @return string
+     */
+    public function compileAnnotation(array $matches): string
+    {
+        return '';
     }
 
     /**
