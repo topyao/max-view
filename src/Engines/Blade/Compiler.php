@@ -99,18 +99,32 @@ class Compiler
     protected function compileView(string $file)
     {
         return preg_replace_callback_array([
-            '/@extends\([\'"](.*?)[\'"]\)/'                                                          => [$this, 'compileExtends'],
-            '/@yield\([\'"]?(.*?)[\'"]?\)/'                                                          => [$this, 'compileYield'],
-            '/@php([\s\S]*?)@endphp/'                                                                => [$this, 'compilePHP'],
+            '/@(.*?)\([\'"](.*?)[\'"]\)/'                                                            => [$this, 'compileFunc'],
+            '/@php/'                                                                                 => [$this, 'compilePHP'],
             '/\{\{(?!--)([\s\S]*?)(?<!--)\}\}/'                                                      => [$this, 'compileEcho'],
             '/\{\{(?:--)[\s\S]*?--(?:\}\})/'                                                         => [$this, 'compileAnnotation'],
-            '/@include\([\'"](.*?)[\'"]\)/'                                                          => [$this, 'compileInclude'],
             '/(@if|@unless|@empty|@isset)\((.*)\)([\s\S]*?)(@endif|@endunless|@endempty|@endisset)/' => [$this, 'compileConditions'],
             '/@for(each)?\((.*)?\)/'                                                                 => [$this, 'compileLoop'],
             '/@switch\((.*?)\)([\s\S]*?)@endswitch/'                                                 => [$this, 'compileSwitch'],
             '/@section\([\'"](.*?)[\'"]\)([\s\S]*?)@endsection/'                                     => [$this, 'compileSection'],
             '/@end(?:(php|foreach|for))/'                                                            => [$this, 'compileEnd']
         ], $this->readFile($this->getRealPath($file)));
+    }
+
+    public function compileFunc(array $matches)
+    {
+        switch ($matches[1]) {
+            case 'yield':
+                $value = explode('\',\'', str_replace(' ', '', $matches[2]), 2);
+                return trim($this->sections[trim($value[0])] ?? (trim($value[1] ?? $matches[0])));
+            case 'extends':
+                $this->parent = $matches[2];
+                break;
+            case 'include':
+                return $this->compileView($matches[2]);
+            default:
+                return $matches[0];
+        }
     }
 
     public function compileEnd(array $matches)
@@ -135,41 +149,10 @@ class Compiler
 
     /**
      * @param $matches
-     *
-     * @return string
-     */
-    protected function compileYield($matches): string
-    {
-        $value = explode('\',\'', str_replace(' ', '', $matches[1]), 2);
-
-        return trim($this->sections[trim($value[0])] ?? (trim($value[1] ?? '')));
-    }
-
-    /**
-     * @param $matches
      */
     protected function compileSection($matches)
     {
         $this->sections[$matches[1]] = $matches[2];
-    }
-
-    /**
-     * @param $matches
-     */
-    protected function compileExtends($matches)
-    {
-        $this->parent = $matches[1];
-    }
-
-    /**
-     * @param $matches
-     *
-     * @return array|string|string[]|null
-     * @throws \Exception
-     */
-    protected function compileInclude($matches)
-    {
-        return $this->compileView($matches[1]);
     }
 
     /**
@@ -227,7 +210,7 @@ class Compiler
      */
     protected function compilePHP($matches): string
     {
-        return sprintf("<?php%s?>", $matches[1]);
+        return "<?php";
     }
 
     /**
