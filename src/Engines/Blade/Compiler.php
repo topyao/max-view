@@ -106,11 +106,21 @@ class Compiler
             '/\{\{(?:--)[\s\S]*?--(?:\}\})/'                                                         => [$this, 'compileAnnotation'],
             '/@include\([\'"](.*?)[\'"]\)/'                                                          => [$this, 'compileInclude'],
             '/(@if|@unless|@empty|@isset)\((.*)\)([\s\S]*?)(@endif|@endunless|@endempty|@endisset)/' => [$this, 'compileConditions'],
-            '/@foreach\((.*?)\)([\s\S]*?)@endforeach/'                                               => [$this, 'compileForeach'],
-            '/@for\((.*?)\)([\s\S]*?)@endfor/'                                                       => [$this, 'compileFor'],
+            '/@for(each)?\((.*)?\)/'                                                                 => [$this, 'compileLoop'],
             '/@switch\((.*?)\)([\s\S]*?)@endswitch/'                                                 => [$this, 'compileSwitch'],
             '/@section\([\'"](.*?)[\'"]\)([\s\S]*?)@endsection/'                                     => [$this, 'compileSection'],
+            '/@end(?:(php|foreach|for))/'                                                            => [$this, 'compileEnd']
         ], $this->readFile($this->getRealPath($file)));
+    }
+
+    public function compileEnd(array $matches)
+    {
+        switch ($endstr = $matches[1]) {
+            case 'php':
+                return '?>';
+            default :
+                return sprintf('<?php end%s; ?>', $endstr);
+        }
     }
 
     /**
@@ -203,21 +213,11 @@ class Compiler
      *
      * @return string
      */
-    protected function compileForeach($matches): string
+    protected function compileLoop($matches): string
     {
-        [$condition, $segment] = array_slice($matches, 1);
-        return sprintf('<?php foreach (%s): ?>%s<?php endforeach; ?>', $condition, $segment);
-    }
+        [$each, $condition] = array_slice($matches, 1);
 
-    /**
-     * @param $matches
-     *
-     * @return string
-     */
-    protected function compileFor($matches): string
-    {
-        [$condition, $segment] = array_slice($matches, 1);
-        return sprintf('<?php for (%s): ?>%s<?php endfor; ?>', $condition, $segment);
+        return sprintf('<?php for%s (%s): ?>', $each, $condition);
     }
 
     /**
