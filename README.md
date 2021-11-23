@@ -38,6 +38,8 @@ composer require max/view:dev-master
 - @switch
 - @section
 
+> 如果使用`extends` + `yield` + `section`, 务必保证子模板中除了`extends` 之外的所有代码均被`section` 包裹
+
 ## 配置文件
 
 安装完成后框架会自动将配置文件`view.php`移动到根包的`config`目录下，如果创建失败，可以手动创建。

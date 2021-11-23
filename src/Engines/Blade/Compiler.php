@@ -99,15 +99,16 @@ class Compiler
     protected function compileView(string $file)
     {
         return preg_replace_callback_array([
-            '/@(.*?)\([\'"](.*?)[\'"]\)/'                                                            => [$this, 'compileFunc'],
-            '/@php/'                                                                                 => [$this, 'compilePHP'],
-            '/\{\{(?!--)([\s\S]*?)(?<!--)\}\}/'                                                      => [$this, 'compileEcho'],
-            '/\{\{(?:--)[\s\S]*?--(?:\}\})/'                                                         => [$this, 'compileAnnotation'],
-            '/(@if|@unless|@empty|@isset)\((.*)\)([\s\S]*?)(@endif|@endunless|@endempty|@endisset)/' => [$this, 'compileConditions'],
-            '/@for(each)?\((.*)?\)/'                                                                 => [$this, 'compileLoop'],
-            '/@switch\((.*?)\)([\s\S]*?)@endswitch/'                                                 => [$this, 'compileSwitch'],
-            '/@section\([\'"](.*?)[\'"]\)([\s\S]*?)@endsection/'                                     => [$this, 'compileSection'],
-            '/@end(?:(php|foreach|for))/'                                                            => [$this, 'compileEnd']
+            '/@(.*?)\([\'"](.*?)[\'"]\)/'                        => [$this, 'compileFunc'],
+            '/@php/'                                             => [$this, 'compilePHP'],
+            '/\{\{(?!--)([\s\S]*?)(?<!--)\}\}/'                  => [$this, 'compileEcho'],
+            '/\{\{(?:--)[\s\S]*?--(?:\}\})/'                     => [$this, 'compileAnnotation'],
+            '/@(if|unless|empty|isset)\((.*)?\)/'                => [$this, 'compileConditions'],
+            '/@else(if\((.*)\))?/'                               => [$this, 'compileElse'],
+            '/@for(each)?\((.*)?\)/'                             => [$this, 'compileLoop'],
+            '/@switch\((.*?)\)([\s\S]*?)@endswitch/'             => [$this, 'compileSwitch'],
+            '/@section\([\'"](.*?)[\'"]\)([\s\S]*?)@endsection/' => [$this, 'compileSection'],
+            '/@end(?:(php|foreach|for|if|unless|empty|isset))/'  => [$this, 'compileEnd']
         ], $this->readFile($this->getRealPath($file)));
     }
 
@@ -116,7 +117,7 @@ class Compiler
         switch ($matches[1]) {
             case 'yield':
                 $value = explode('\',\'', str_replace(' ', '', $matches[2]), 2);
-                return trim($this->sections[trim($value[0])] ?? (trim($value[1] ?? $matches[0])));
+                return $this->sections[$value[0]] ?? ($value[1] ?? '');
             case 'extends':
                 $this->parent = $matches[2];
                 break;
@@ -129,11 +130,15 @@ class Compiler
 
     public function compileEnd(array $matches)
     {
-        switch ($endstr = $matches[1]) {
+        switch ($endStr = $matches[1]) {
             case 'php':
                 return '?>';
+            case 'isset':
+            case 'unless':
+            case 'empty':
+                return sprintf('<?php endif; ?>', $endStr);
             default :
-                return sprintf('<?php end%s; ?>', $endstr);
+                return sprintf('<?php end%s; ?>', $endStr);
         }
     }
 
@@ -156,20 +161,25 @@ class Compiler
     }
 
     /**
+     * @param array $matches
+     *
+     * @return string
+     */
+    protected function compileElse(array $matches)
+    {
+        return sprintf('<?php else%s: ?>', $matches[1] ?? '');
+    }
+
+    /**
      * @param $matches
      *
      * @return string
      */
     protected function compileConditions($matches): string
     {
-        [$statement, $condition, $content] = array_slice($matches, 1);
-        switch ($statement = str_replace('@', '', $statement)) {
+        [$statement, $condition] = array_slice($matches, 1);
+        switch ($statement) {
             case 'if':
-                $content = preg_replace(
-                    ['/@elseif\((.*)\)/', '/@else/'],
-                    ['<?php elseif(\\1): ?>', '<?php else: ?>']
-                    , $content
-                );
                 break;
             case 'unless':
                 $condition = "!($condition)";
@@ -178,7 +188,7 @@ class Compiler
                 $condition = sprintf('%s(%s)', $statement, $condition);
                 break;
         }
-        return sprintf('<?php if (%s): ?>%s<?php endif; ?>', $condition, $content);
+        return sprintf('<?php if (%s): ?>', $condition);
     }
 
     /**
