@@ -99,145 +99,117 @@ class Compiler
     protected function compileView(string $file)
     {
         return preg_replace_callback_array([
-            '/@(.*?)\([\'"](.*?)[\'"]\)/'                        => [$this, 'compileFunc'],
-            '/@php/'                                             => [$this, 'compilePHP'],
-            '/\{\{(?!--)([\s\S]*?)(?<!--)\}\}/'                  => [$this, 'compileEcho'],
-            '/\{\{(?:--)[\s\S]*?--(?:\}\})/'                     => [$this, 'compileAnnotation'],
-            '/@(if|unless|empty|isset)\((.*)?\)/'                => [$this, 'compileConditions'],
-            '/@else(if\((.*)\))?/'                               => [$this, 'compileElse'],
-            '/@for(each)?\((.*)?\)/'                             => [$this, 'compileLoop'],
-            '/@switch\((.*?)\)([\s\S]*?)@endswitch/'             => [$this, 'compileSwitch'],
-            '/@section\([\'"](.*?)[\'"]\)([\s\S]*?)@endsection/' => [$this, 'compileSection'],
-            '/@end(?:(php|foreach|for|if|unless|empty|isset))/'  => [$this, 'compileEnd']
+            '/@(.*?)\((.*)?\)/'                                                        => [$this, 'compileFunc'],
+            '/\{\{((--)?)([\s\S]*?)\\1\}\}/'                                           => [$this, 'compileEchos'],
+            '/@(section|switch)\((.*?)\)([\s\S]*?)@end\\1/'                            => [$this, 'compileParcel'],
+            '/@(php|else|endphp|endforeach|endfor|endif|endunless|endempty|endisset)/' => [$this, 'compileDirective']
         ], $this->readFile($this->getRealPath($file)));
     }
 
-    public function compileFunc(array $matches)
+    /**
+     * 编译输出内容
+     *
+     * @param array $matches
+     *
+     * @return string|void
+     */
+    protected function compileEchos(array $matches)
     {
-        switch ($matches[1]) {
+        if ('' === $matches[1]) {
+            return sprintf('<?php echo htmlspecialchars(%s); ?>', $matches[3]);
+        }
+    }
+
+    /**
+     * 编译包裹内容
+     *
+     * @param array $matches
+     *
+     * @return string|void
+     */
+    protected function compileParcel(array $matches)
+    {
+        [$directive, $condition, $segment] = array_slice($matches, 1);
+        switch ($directive) {
+            case 'section':
+                $this->sections[$this->trim($condition)] = $segment;
+                break;
+            case 'switch':
+                $segment = preg_replace(
+                    ['/@case\((.*)\)/', '/@default/',],
+                    ["<?php case \\1: ?>", '<?php default: ?>',],
+                    $segment
+                );
+                return sprintf('<?php switch(%s): ?>%s<?php endswitch; ?>', $condition, trim($segment));
+        }
+    }
+
+    /**
+     * 编译指令
+     *
+     * @param array $matches
+     *
+     * @return string
+     */
+    protected function compileDirective(array $matches)
+    {
+        switch ($directive = $matches[1]) {
+            case 'php':
+                return '<?php ';
+            case 'endphp':
+                return '?>';
+            case 'else':
+                return '<?php else: ?>';
+            case 'endisset':
+            case 'endunless':
+            case 'endempty':
+                return sprintf('<?php endif; ?>', $directive);
+            default :
+                return sprintf('<?php %s; ?>', $directive);
+        }
+    }
+
+    /**
+     * 编译函数
+     *
+     * @param array $matches
+     *
+     * @return array|mixed|string|string[]|void|null
+     * @throws \Exception
+     */
+    protected function compileFunc(array $matches)
+    {
+        [$func, $arguments] = [$matches[1], $this->trim($matches[2])];
+        switch ($func) {
             case 'yield':
-                $value = explode('\',\'', str_replace(' ', '', $matches[2]), 2);
+                $value = array_map(function($v) {
+                    return $this->trim($v);
+                }, explode(',', $arguments, 2));
                 return $this->sections[$value[0]] ?? ($value[1] ?? '');
             case 'extends':
-                $this->parent = $matches[2];
+                $this->parent = $arguments;
                 break;
             case 'include':
-                return $this->compileView($matches[2]);
+                return $this->compileView($arguments);
+            case 'if':
+                return sprintf('<?php if (%s): ?>', $arguments);
+            case 'unless':
+                return sprintf('<?php if (!(%s)): ?>', $arguments);
+            case 'empty':
+            case 'isset':
+                return sprintf('<?php if (%s(%s)): ?>', $func, $arguments);
+            case 'for':
+            case 'foreach':
+                return sprintf('<?php %s(%s): ?>', $func, $arguments);
+            case 'elseif':
+                return sprintf('<?php elseif(%s): ?>', $arguments);
             default:
                 return $matches[0];
         }
     }
 
-    public function compileEnd(array $matches)
+    protected function trim(string $value)
     {
-        switch ($endStr = $matches[1]) {
-            case 'php':
-                return '?>';
-            case 'isset':
-            case 'unless':
-            case 'empty':
-                return sprintf('<?php endif; ?>', $endStr);
-            default :
-                return sprintf('<?php end%s; ?>', $endStr);
-        }
+        return trim($value, '\'" ');
     }
-
-    /**
-     * @param array $matches
-     *
-     * @return string
-     */
-    public function compileAnnotation(array $matches): string
-    {
-        return '';
-    }
-
-    /**
-     * @param $matches
-     */
-    protected function compileSection($matches)
-    {
-        $this->sections[$matches[1]] = $matches[2];
-    }
-
-    /**
-     * @param array $matches
-     *
-     * @return string
-     */
-    protected function compileElse(array $matches)
-    {
-        return sprintf('<?php else%s: ?>', $matches[1] ?? '');
-    }
-
-    /**
-     * @param $matches
-     *
-     * @return string
-     */
-    protected function compileConditions($matches): string
-    {
-        [$statement, $condition] = array_slice($matches, 1);
-        switch ($statement) {
-            case 'if':
-                break;
-            case 'unless':
-                $condition = "!($condition)";
-                break;
-            default:
-                $condition = sprintf('%s(%s)', $statement, $condition);
-                break;
-        }
-        return sprintf('<?php if (%s): ?>', $condition);
-    }
-
-    /**
-     * @param $matches
-     *
-     * @return string
-     */
-    protected function compileEcho($matches): string
-    {
-        return sprintf('<?php echo %s; ?>', $matches[1]);
-    }
-
-    /**
-     * @param $matches
-     *
-     * @return string
-     */
-    protected function compileLoop($matches): string
-    {
-        [$each, $condition] = array_slice($matches, 1);
-
-        return sprintf('<?php for%s (%s): ?>', $each, $condition);
-    }
-
-    /**
-     * @param $matches
-     *
-     * @return string
-     */
-    protected function compilePHP($matches): string
-    {
-        return "<?php";
-    }
-
-    /**
-     * @param array $matches
-     *
-     * @return string
-     */
-    protected function compileSwitch(array $matches): string
-    {
-        [$condition, $segment] = array_slice($matches, 1);
-        $segment = preg_replace(
-            ['/@case\((.*)\)/', '/@default/',],
-            ["<?php case \\1: ?>", '<?php default: ?>',],
-            $segment
-        );
-
-        return sprintf('<?php switch(%s): ?>%s<?php endswitch; ?>', $condition, trim($segment));
-    }
-
 }
