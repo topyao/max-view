@@ -21,8 +21,7 @@
     }
   },
   "require": {
-    "php": "^7.4|^8.0",
-    "max/utils": "dev-master"
+    "php": "^7.4|^8.0"
   },
   "extra": {
     "max": {
