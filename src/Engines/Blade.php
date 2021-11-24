@@ -99,15 +99,24 @@ class Blade extends AbstractEngine
         return $this->compileDir;
     }
 
-    public function render(string $bladeTemplate, array $arguments = [])
+    /**
+     * 渲染
+     * @param string $template
+     * @param array $arguments
+     * @throws \Exception
+     */
+    public function render(string $template, array $arguments = [])
     {
-        try {
-            extract($arguments);
-            include $this->compiler->compile($bladeTemplate);
-        } catch (\Exception $e) {
-            ob_clean();
-            throw $e;
-        }
+        $this->renderView($template, $arguments);
+    }
+
+    /**
+     * 渲染模板
+     */
+    protected function renderView()
+    {
+        extract(func_get_arg(1));
+        include $this->compiler->compile(func_get_arg(0));
     }
 
 }
