@@ -114,7 +114,7 @@ class Compiler
      */
     protected function compileRaw(array $matches)
     {
-        return sprintf('<?php echo base64_decode(\'%s\'); ?>', base64_encode(trim($matches[1])));
+        return sprintf('<?php echo %s; ?>', $matches[1]);
     }
 
     /**
