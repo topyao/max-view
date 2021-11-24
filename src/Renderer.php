@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Max\View;
 
+use Max\Config\Repository;
 use Max\View\Contracts\ViewEngineInterface;
 
 class Renderer
@@ -14,6 +15,7 @@ class Renderer
 
     /**
      * Renderer constructor.
+     *
      * @param ViewEngineInterface $viewEngine
      */
     public function __construct(ViewEngineInterface $viewEngine)
@@ -21,9 +23,19 @@ class Renderer
         $this->viewEngine = $viewEngine;
     }
 
+    public static function __setter(Repository $repository)
+    {
+        $config  = $repository->get('view');
+        $engine  = $config['engine'];
+        $options = $config['options'];
+        $engine  = new $engine($options);
+        return new static($engine);
+    }
+
     /**
      * @param string $template
-     * @param array $arguments
+     * @param array  $arguments
+     *
      * @return false|string
      */
     public function render(string $template, array $arguments = [])
@@ -36,6 +48,7 @@ class Renderer
     /**
      * @param $method
      * @param $args
+     *
      * @return mixed
      */
     public function __call($method, $args)

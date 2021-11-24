@@ -56,8 +56,6 @@ return [
         'path' => __DIR__ . '/../views/',
         // 编译和缓存目录
         'compile_dir' => __DIR__ . '/../storage/cache/views/compiled',
-        // 模板调试
-        'debug' => false,
         // 模板缓存
         'cache' => false,
         // 模板后缀
@@ -102,10 +100,12 @@ return [
         'left_delimiter' => '{{',
         'right_delimiter' => '}}',
     ],
-];   
+];
 ```
 
 ## 使用
+
+> 如果你使用MaxPHP, 则可以直接注入Renderer实例来使用，否则需要按照下面的方式使用
 
 ```php
 $engine = config('view.engine');
@@ -116,14 +116,5 @@ return $renderer->render('index', ['test' => ['123']]);
 ### 自定义引擎
 
 自定义引擎必须实现`ViewEngineInterface`接口, 将新的引擎实例传递给渲染器即可
-
-### 助手函数
-> 如果你使用MaxPHP, 则可以使用助手函数和门面
-
-```php
-\Max\Foundation\Facades\View::render($template, array $arguments = []);
-
-view($template, array $arguments = []);
-```
 
 > 官网：https://www.chengyao.xyz
