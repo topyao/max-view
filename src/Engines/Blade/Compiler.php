@@ -100,10 +100,21 @@ class Compiler
     {
         return preg_replace_callback_array([
             '/@(.*?)\((.*)?\)/'                                                        => [$this, 'compileFunc'],
+            '/\{!!([\s\S]*?)!!\}/'                                                     => [$this, 'compileRaw'],
             '/\{\{((--)?)([\s\S]*?)\\1\}\}/'                                           => [$this, 'compileEchos'],
             '/@(section|switch)\((.*?)\)([\s\S]*?)@end\\1/'                            => [$this, 'compileParcel'],
             '/@(php|else|endphp|endforeach|endfor|endif|endunless|endempty|endisset)/' => [$this, 'compileDirective']
         ], $this->readFile($this->getRealPath($file)));
+    }
+
+    /**
+     * @param array $matches
+     *
+     * @return string
+     */
+    protected function compileRaw(array $matches)
+    {
+        return sprintf('<?php echo %s; ?>', $matches[1]);
     }
 
     /**
