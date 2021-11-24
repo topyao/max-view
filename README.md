@@ -63,35 +63,46 @@ return [
         // 模板后缀
         'suffix' => '.blade.php',
     ],
-//    'engine' => \Max\View\Engines\Twig::class,
-//    'options' => [
-//        'path' => __DIR__ . '/../views/',
-//        //模板调试
-//        'debug' => false,
-//        //模板缓存或者缓存路径
-//        'cache' => false,
-//        //模板后缀
-//        'suffix' => '.html',
-//    ],
-//
-//    'engine' => \Max\View\Engines\Smarty::class,
-//    'options' => [
-//        // 模板目录
-//        'path' => __DIR__ . '/../views/',
-//        'compile_dir' => __DIR__ . '/../storage/cache/views/compiled',
-//        'cache_dir' => __DIR__ . '/../storage/cache/views/compiled',
-//        //模板调试
-//        'debug' => false,
-//        //模板缓存
-//        'cache' => false,
-//        //模板后缀
-//        'suffix' => '.html',
-//        //左右边界
-//        'left_delimiter' => '{{',
-//        'right_delimiter' => '}}',
-//    ],
 ];
 
+```
+
+如果你使用`Smarty` 或者`blade`, 配置文件可以按照下面的例子修改
+
+```php
+ <?php
+
+return [
+    // Twig
+    'engine' => \Max\View\Engines\Twig::class,
+    'options' => [
+        'path' => __DIR__ . '/../views/',
+        //模板调试
+        'debug' => false,
+        //模板缓存或者缓存路径
+        'cache' => false,
+        //模板后缀
+        'suffix' => '.html',
+    ],
+
+    // Smarty
+    'engine' => \Max\View\Engines\Smarty::class,
+    'options' => [
+        // 模板目录
+        'path' => __DIR__ . '/../views/',
+        'compile_dir' => __DIR__ . '/../storage/cache/views/compiled',
+        'cache_dir' => __DIR__ . '/../storage/cache/views/compiled',
+        //模板调试
+        'debug' => false,
+        //模板缓存
+        'cache' => false,
+        //模板后缀
+        'suffix' => '.html',
+        //左右边界
+        'left_delimiter' => '{{',
+        'right_delimiter' => '}}',
+    ],
+];   
 ```
 
 ## 使用
