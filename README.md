@@ -107,14 +107,9 @@ return [
 
 ## 使用
 
-> 以下以`Blade`为例
-
 ```php
-// 实例化Blade
-$blade = new Blade(config('view.options'));
-// 实例化渲染器，传入Blade
-$renderer = new Renderer($blade);
-// 渲染模板
+$engine = config('view.engine');
+$renderer = new Renderer(new $engine(config('view.options')));
 return $renderer->render('index', ['test' => ['123']]);
 ```
 
