@@ -112,7 +112,7 @@ class Compiler
      *
      * @return string
      */
-    protected function compileRaw(array $matches)
+    protected function compileRaw(array $matches): string
     {
         return sprintf('<?php echo %s; ?>', $matches[1]);
     }
@@ -162,7 +162,7 @@ class Compiler
      *
      * @return string
      */
-    protected function compileDirective(array $matches)
+    protected function compileDirective(array $matches): string
     {
         switch ($directive = $matches[1]) {
             case 'php':
@@ -174,7 +174,7 @@ class Compiler
             case 'endisset':
             case 'endunless':
             case 'endempty':
-                return sprintf('<?php endif; ?>', $directive);
+                return '<?php endif; ?>';
             default :
                 return sprintf('<?php %s; ?>', $directive);
         }
@@ -201,7 +201,8 @@ class Compiler
             case 'include':
                 return $this->compileView($arguments);
             case 'if':
-                return sprintf('<?php if (%s): ?>', $arguments);
+            case 'elseif':
+                return sprintf('<?php %s (%s): ?>', $func, $arguments);
             case 'unless':
                 return sprintf('<?php if (!(%s)): ?>', $arguments);
             case 'empty':
@@ -210,14 +211,17 @@ class Compiler
             case 'for':
             case 'foreach':
                 return sprintf('<?php %s(%s): ?>', $func, $arguments);
-            case 'elseif':
-                return sprintf('<?php elseif(%s): ?>', $arguments);
             default:
                 return $matches[0];
         }
     }
 
-    protected function trim(string $value)
+    /**
+     * @param string $value
+     *
+     * @return string
+     */
+    protected function trim(string $value): string
     {
         return trim($value, '\'" ');
     }
