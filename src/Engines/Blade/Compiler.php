@@ -127,7 +127,7 @@ class Compiler
     protected function compileEchos(array $matches)
     {
         if ('' === $matches[1]) {
-            return sprintf('<?php echo htmlspecialchars(%s); ?>', $matches[3]);
+            return sprintf('<?php echo htmlspecialchars(%s, ENT_QUOTES); ?>', $matches[3]);
         }
     }
 
