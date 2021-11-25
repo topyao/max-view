@@ -25,6 +25,7 @@ composer require max/view:dev-master
 
 - {{}}
 - {{-- --}}
+- {!! !!}
 - @extends
 - @yield
 - @php
@@ -90,7 +91,7 @@ return [
         // 模板目录
         'path'            => __DIR__ . '/../views/',
         'compile_dir'     => __DIR__ . '/../storage/cache/views/compile',
-        'cache_dir'       => __DIR__ . '/../storage/cache/views/compile',
+        'cache_dir'       => __DIR__ . '/../storage/cache/views/cache',
         //模板调试
         'debug'           => false,
         //模板缓存
