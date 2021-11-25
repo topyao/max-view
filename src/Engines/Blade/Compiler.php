@@ -193,9 +193,7 @@ class Compiler
         [$func, $arguments] = [$matches[1], $this->trim($matches[2])];
         switch ($func) {
             case 'yield':
-                $value = array_map(function($v) {
-                    return $this->trim($v);
-                }, explode(',', $arguments, 2));
+                $value = array_map([$this, 'trim'], explode(',', $arguments, 2));
                 return $this->sections[$value[0]] ?? ($value[1] ?? '');
             case 'extends':
                 $this->parent = $arguments;
