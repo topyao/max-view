@@ -11,7 +11,7 @@
 <img src="https://img.shields.io/badge/license-apache%202-blue">
 </p>
 
-MaxPHP视图组件，支持Blade，Smarty，Twig。 可以独立使用!
+`MaxPHP`视图组件，支持`Blade`，`Smarty`，`Twig`。 可以独立使用!
 
 # 安装
 
@@ -21,7 +21,7 @@ composer require max/view:dev-master
 
 # 使用
 
-> Blade 可能会有未知的Bug，使用时需要注意，Blade引擎支持的语法如下
+> Blade引擎支持的语法如下
 
 - {{}}
 - {{-- --}}

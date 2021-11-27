@@ -7,13 +7,6 @@ use Max\View\Engines\Blade\Compiler;
 class Blade extends AbstractEngine
 {
     /**
-     * 调试
-     *
-     * @var bool
-     */
-    protected bool $debug = false;
-
-    /**
      * 缓存
      *
      * @var bool
@@ -57,14 +50,6 @@ class Blade extends AbstractEngine
         unset($options['compile_dir']);
         parent::__construct($options);
         $this->compiler = new Compiler($this);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isDebug(): bool
-    {
-        return $this->debug;
     }
 
     /**

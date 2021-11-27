@@ -12,7 +12,6 @@ class Smarty extends AbstractEngine
      */
     protected string $suffix = '';
 
-
     /**
      * @var \Smarty
      */
