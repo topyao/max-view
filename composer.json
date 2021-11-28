@@ -1,33 +1,32 @@
 {
-  "name": "max/view",
-  "type": "library",
-  "license": "Apache-2.0",
-  "homepage": "https://www.chengyao.xyz",
-  "description": "一款可扩展的视图引擎，内置Blade引擎和Smarty, Twig驱动。",
-  "authors": [
-    {
-      "name": "chengyao",
-      "email": "bigyao@139.com"
+    "name": "max/view",
+    "license": "Apache-2.0",
+    "homepage": "https://www.chengyao.xyz",
+    "description": "A view engine that supports Blade, Smarty, twig, and can be extended.",
+    "authors": [
+        {
+            "name": "ChengYao",
+            "email": "987861463@qq.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Max\\View\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Max\\View\\Test\\": "tests/"
+        }
+    },
+    "require": {
+        "php": "^7.4|^8.0"
+    },
+    "extra": {
+        "max": {
+            "config": {
+                "view": "publish/view.php"
+            }
+        }
     }
-  ],
-  "autoload": {
-    "psr-4": {
-      "Max\\View\\": "src/"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Max\\View\\Test\\": "tests/"
-    }
-  },
-  "require": {
-    "php": "^7.4|^8.0"
-  },
-  "extra": {
-    "max": {
-      "config": {
-        "view": "publish/view.php"
-      }
-    }
-  }
 }
