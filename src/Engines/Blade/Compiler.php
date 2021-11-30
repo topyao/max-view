@@ -42,8 +42,8 @@ class Compiler
      */
     protected function readFile($template)
     {
-        if (file_exists($template)) {
-            return file_get_contents($template);
+        if (\file_exists($template)) {
+            return \file_get_contents($template);
         }
         throw new ViewNotExistException('View ' . $template . ' does not exist');
     }
@@ -82,7 +82,7 @@ class Compiler
                 $this->parent = null;
                 $stream       = $this->compileView($parent);
             }
-            file_put_contents($compiledFile, $stream);
+            \file_put_contents($compiledFile, $stream, LOCK_EX);
         }
 
         return $compiledFile;

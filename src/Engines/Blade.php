@@ -46,7 +46,7 @@ class Blade extends AbstractEngine
      */
     public function __construct(array $options = [])
     {
-        $this->compileDir = rtrim($options['compile_dir'], DIRECTORY_SEPARATOR) . '/';
+        $this->compileDir = rtrim($options['compile_dir'], '/\/') . '/';
         unset($options['compile_dir']);
         parent::__construct($options);
         $this->compiler = new Compiler($this);
@@ -86,8 +86,10 @@ class Blade extends AbstractEngine
 
     /**
      * 渲染
+     *
      * @param string $template
-     * @param array $arguments
+     * @param array  $arguments
+     *
      * @throws \Exception
      */
     public function render(string $template, array $arguments = [])
