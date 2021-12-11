@@ -23,7 +23,7 @@ class Renderer
         $this->viewEngine = $viewEngine;
     }
 
-    public static function __setter(Repository $repository)
+    public static function __new(Repository $repository)
     {
         $config  = $repository->get('view');
         $engine  = $config['engine'];
