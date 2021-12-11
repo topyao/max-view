@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Max\View;
 
-use Max\Config\Repository;
 use Max\View\Contracts\ViewEngineInterface;
 
 class Renderer
@@ -21,15 +20,6 @@ class Renderer
     public function __construct(ViewEngineInterface $viewEngine)
     {
         $this->viewEngine = $viewEngine;
-    }
-
-    public static function __new(Repository $repository)
-    {
-        $config  = $repository->get('view');
-        $engine  = $config['engine'];
-        $options = $config['options'];
-        $engine  = new $engine($options);
-        return new static($engine);
     }
 
     /**
