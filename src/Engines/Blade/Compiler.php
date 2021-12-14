@@ -55,9 +55,9 @@ class Compiler
      */
     protected function getRealPath($template): string
     {
-        return sprintf('%s/%s%s',
-            rtrim($this->blade->getPath(), DIRECTORY_SEPARATOR),
-            $template,
+        return sprintf('%s%s%s',
+            $this->blade->getPath(),
+            \str_replace('.', '/', $template),
             $this->blade->getSuffix()
         );
     }
@@ -74,7 +74,7 @@ class Compiler
         $compileDir   = $this->blade->getCompileDir();
         $compiledFile = $compileDir . md5($template) . '.php';
 
-        if (false === $this->blade->isCacheable() || false === file_exists($compiledFile)) {
+        if (false === $this->blade->isCacheable() || false === \file_exists($compiledFile)) {
             !is_dir($compileDir) && mkdir($compileDir, 0755, true);
             $stream = $this->compileView($template);
             while (isset($this->parent)) {
